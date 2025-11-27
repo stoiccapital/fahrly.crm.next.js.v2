@@ -1,8 +1,23 @@
-export default function Page() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold">Opportunity Detail</h1>
-    </div>
-  );
-}
+import { notFound } from "next/navigation";
 
+import { opportunities } from "../_data/mockOpportunities";
+
+import type { Opportunity } from "./_types";
+
+import { OpportunityDetailClient } from "./_components/OpportunityDetailClient";
+
+type Props = {
+  params: { id: string };
+};
+
+export default function OpportunityDetailPage({ params }: Props) {
+  const opportunity: Opportunity | undefined = opportunities.find(
+    (opp) => opp.id === params.id
+  );
+
+  if (!opportunity) {
+    notFound();
+  }
+
+  return <OpportunityDetailClient opportunity={opportunity} />;
+}
