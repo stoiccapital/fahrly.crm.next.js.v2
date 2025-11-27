@@ -19,10 +19,16 @@ import {
   NoteType,
   NoteTargetType,
 } from '@/app/(routes)/crm/accounts/_types';
+import type { Opportunity } from '@/app/(routes)/crm/opportunities/_types';
+import type { ProposalType } from '@/app/(routes)/crm/proposals/_types';
+import type { Task, TaskStatus } from '@/app/(routes)/crm/tasks/_types';
+import type { Ticket, TicketStatus } from '@/app/(routes)/crm/tickets/_types';
 import { mockLeads } from '@/app/(routes)/crm/leads/_data/mockLeads';
 import { mockAccounts } from '@/app/(routes)/crm/accounts/_data/mockAccounts';
 import { mockContacts } from '@/app/(routes)/crm/accounts/_data/mockContacts';
 import { mockNotes } from '@/app/(routes)/crm/accounts/_data/mockNotes';
+import { opportunities as mockOpportunities } from '@/app/(routes)/crm/opportunities/_data/mockOpportunities';
+import { mockProposals } from '@/app/(routes)/crm/proposals/_data/mockProposals';
 
 const SUMMARY_CHAR_LIMIT = 250;
 
@@ -35,6 +41,8 @@ type CRMStorageShape = {
   contacts?: any[];
   notes?: any[];
   proposals?: any[];
+  tasks?: any[];
+  tickets?: any[];
 };
 
 type ConvertLeadAccountData = {
@@ -91,8 +99,12 @@ type UpdateContactDetailsInput = {
 type CRMContextValue = {
   leads: Lead[];
   accounts: AccountType[];
+  opportunities: Opportunity[];
+  proposals: ProposalType[];
   contacts: ContactType[];
   notes: NoteType[];
+  tasks: Task[];
+  tickets: Ticket[];
   convertLeadToAccount: (options: {
     leadId: string;
     accountData: ConvertLeadAccountData;
@@ -105,6 +117,16 @@ type CRMContextValue = {
   updateAccountDetails: (input: UpdateAccountDetailsInput) => void;
   updateContactDetails: (input: UpdateContactDetailsInput) => void;
   markAccountAsCustomer: (accountId: string, customerSince?: string) => void;
+  addTask: (task: Task) => void;
+  updateTaskStatus: (id: string, status: TaskStatus) => void;
+  updateTask: (id: string, patch: Partial<Task>) => void;
+  deleteTask: (id: string) => void;
+  addTicket: (ticket: Ticket) => void;
+  updateTicketStatus: (id: string, status: TicketStatus) => void;
+  updateTicket: (id: string, patch: Partial<Ticket>) => void;
+  deleteTicket: (id: string) => void;
+  addOpportunity: (opp: Opportunity) => void;
+  updateOpportunity: (id: string, patch: Partial<Opportunity>) => void;
 };
 
 const CRMContext = createContext<CRMContextValue | undefined>(undefined);
@@ -116,8 +138,12 @@ type CRMProviderProps = {
 export function CRMProvider({ children }: CRMProviderProps) {
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [accounts, setAccounts] = useState<AccountType[]>(mockAccounts);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(mockOpportunities);
+  const [proposals, setProposals] = useState<ProposalType[]>(mockProposals);
   const [contacts, setContacts] = useState<ContactType[]>(mockContacts);
   const [notes, setNotes] = useState<NoteType[]>(mockNotes);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   // Restore state from localStorage on mount
   useEffect(() => {
@@ -138,8 +164,7 @@ export function CRMProvider({ children }: CRMProviderProps) {
       }
 
       if (parsed.opportunities && Array.isArray(parsed.opportunities)) {
-        // If you later add opportunities to the store, restore them here:
-        // setOpportunities(parsed.opportunities as any);
+        setOpportunities(parsed.opportunities as any);
       }
 
       if (parsed.contacts && Array.isArray(parsed.contacts)) {
@@ -150,10 +175,17 @@ export function CRMProvider({ children }: CRMProviderProps) {
         setNotes(parsed.notes as any);
       }
 
-      // If you later add proposals to the store, you can restore them here too:
-      // if (parsed.proposals && Array.isArray(parsed.proposals)) {
-      //   setProposals(parsed.proposals as any);
-      // }
+      if (parsed.tasks && Array.isArray(parsed.tasks)) {
+        setTasks(parsed.tasks as any);
+      }
+
+      if (parsed.tickets && Array.isArray(parsed.tickets)) {
+        setTickets(parsed.tickets as any);
+      }
+
+      if (parsed.proposals && Array.isArray(parsed.proposals)) {
+        setProposals(parsed.proposals as any);
+      }
     } catch (error) {
       console.error("Failed to restore CRM state from localStorage", error);
     }
@@ -166,12 +198,12 @@ export function CRMProvider({ children }: CRMProviderProps) {
     const payload: CRMStorageShape = {
       leads,
       accounts,
-      // If you later add opportunities to the store, include them here:
-      // opportunities,
+      opportunities,
+      proposals,
       contacts,
       notes,
-      // If you later add proposals to the store, include them here:
-      // proposals,
+      tasks,
+      tickets,
     };
 
     try {
@@ -179,7 +211,7 @@ export function CRMProvider({ children }: CRMProviderProps) {
     } catch (error) {
       console.error("Failed to persist CRM state to localStorage", error);
     }
-  }, [leads, accounts, contacts, notes]);
+  }, [leads, accounts, opportunities, proposals, contacts, notes, tasks, tickets]);
 
   const convertLeadToAccount = useCallback(
     (options: { leadId: string; accountData: ConvertLeadAccountData }) => {
@@ -399,12 +431,70 @@ export function CRMProvider({ children }: CRMProviderProps) {
     [],
   );
 
+  const addTask = useCallback((task: Task) => {
+    setTasks((prev) => [...prev, task]);
+  }, []);
+
+  const updateTaskStatus = useCallback((id: string, status: TaskStatus) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status } : t))
+    );
+  }, []);
+
+  const updateTask = useCallback((id: string, patch: Partial<Task>) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...patch } : t))
+    );
+  }, []);
+
+  const deleteTask = useCallback((id: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const addTicket = useCallback((ticket: Ticket) => {
+    setTickets((prev) => [...prev, ticket]);
+  }, []);
+
+  const updateTicketStatus = useCallback((id: string, status: TicketStatus) => {
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, status, updatedAt: new Date().toISOString() } : t
+      )
+    );
+  }, []);
+
+  const updateTicket = useCallback((id: string, patch: Partial<Ticket>) => {
+    setTickets((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, ...patch, updatedAt: new Date().toISOString() } : t
+      )
+    );
+  }, []);
+
+  const deleteTicket = useCallback((id: string) => {
+    setTickets((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const addOpportunity = useCallback((opp: Opportunity) => {
+    setOpportunities((prev) => [...prev, opp]);
+  }, []);
+
+  const updateOpportunity = useCallback((id: string, patch: Partial<Opportunity>) => {
+    setOpportunities((prev) =>
+      prev.map((o) => (o.id === id ? { ...o, ...patch } : o))
+    );
+  }, []);
+
   const value = useMemo(
     () => ({
       leads,
       accounts,
+      opportunities,
+      proposals,
       contacts,
       notes,
+      tasks,
+      tickets,
       convertLeadToAccount,
       addContact,
       moveAccountToLead,
@@ -414,8 +504,18 @@ export function CRMProvider({ children }: CRMProviderProps) {
       updateAccountDetails,
       updateContactDetails,
       markAccountAsCustomer,
+      addTask,
+      updateTaskStatus,
+      updateTask,
+      deleteTask,
+      addTicket,
+      updateTicketStatus,
+      updateTicket,
+      deleteTicket,
+      addOpportunity,
+      updateOpportunity,
     }),
-    [leads, accounts, contacts, notes, convertLeadToAccount, addContact, moveAccountToLead, addNote, updateAccountSummary, updateContactSummary, updateAccountDetails, updateContactDetails, markAccountAsCustomer],
+    [leads, accounts, opportunities, proposals, contacts, notes, tasks, tickets, convertLeadToAccount, addContact, moveAccountToLead, addNote, updateAccountSummary, updateContactSummary, updateAccountDetails, updateContactDetails, markAccountAsCustomer, addTask, updateTaskStatus, updateTask, deleteTask, addTicket, updateTicketStatus, updateTicket, deleteTicket, addOpportunity, updateOpportunity],
   );
 
   return <CRMContext.Provider value={value}>{children}</CRMContext.Provider>;

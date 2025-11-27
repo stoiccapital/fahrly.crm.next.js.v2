@@ -2,21 +2,22 @@
 
 import { useState } from "react";
 
-import { opportunities as mockData, stageProbability } from "./_data/mockOpportunities";
+import { useCRMStore } from "@/store/crmStore";
+
+import { stageProbability } from "./_data/mockOpportunities";
 
 import { OpportunityList } from "./_components/OpportunityList";
 
 import { NewOpportunityModal } from "./_components/NewOpportunityModal";
 
-import type { OpportunityStage } from "./_types";
-
-import { mockAccounts } from "../accounts/_data/mockAccounts";
-
-const accounts = mockAccounts as any[];
+import type { OpportunityStage, OpportunityStatus } from "./_types";
 
 export default function OpportunitiesPage() {
-  const [items, setItems] = useState(mockData);
+  const { opportunities, accounts, addOpportunity } = useCRMStore();
   const [open, setOpen] = useState(false);
+
+  const safeOpportunities = (opportunities ?? []) as any[];
+  const safeAccounts = (accounts ?? []) as any[];
 
   const createOpportunity = (data: {
     name: string;
@@ -31,12 +32,15 @@ export default function OpportunitiesPage() {
     const stage = data.stage;
     const probability = stageProbability[stage];
 
-    const account = accounts.find((a) => a.id === data.accountId);
+    const account = safeAccounts.find((a) => a.id === data.accountId);
 
     const accountName =
       account?.companyName || account?.legalCompanyName || "Unknown account";
 
     const now = new Date().toISOString().slice(0, 10);
+
+    const status: OpportunityStatus = stage === "WON" ? "Closed Won" : stage === "LOST" ? "Closed Lost" : "Open";
+    const currency: "EUR" | "USD" | "CHF" = data.currency as "EUR" | "USD" | "CHF";
 
     const newOpp = {
       ...data,
@@ -45,10 +49,11 @@ export default function OpportunitiesPage() {
       createdAt: now,
       updatedAt: now,
       probability,
-      status: stage === "WON" ? "Closed Won" : stage === "LOST" ? "Closed Lost" : "Open"
+      status,
+      currency
     };
 
-    setItems([newOpp as any, ...items]);
+    addOpportunity(newOpp);
   };
 
   return (
@@ -58,7 +63,7 @@ export default function OpportunitiesPage() {
           isOpen={open}
           onClose={() => setOpen(false)}
           onCreate={createOpportunity}
-          accounts={accounts.map((a) => ({
+          accounts={safeAccounts.map((a) => ({
             id: a.id,
             name: a.companyName || a.legalCompanyName || "Unknown account"
           }))}
@@ -79,7 +84,7 @@ export default function OpportunitiesPage() {
             New Opportunity
           </button>
         </div>
-        <OpportunityList items={items} />
+        <OpportunityList items={safeOpportunities} />
       </div>
     </>
   );

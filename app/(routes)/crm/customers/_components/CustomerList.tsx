@@ -2,21 +2,15 @@
 
 import Link from "next/link";
 
-import { useCRMStore } from "@/store/crmStore";
-
 import { Card, Badge, Button } from "@/app/components/shared/ui";
 
 import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 
-export function CustomerList() {
-  // useCRMStore is a React Context hook with NO selector
-  const { accounts } = useCRMStore();
+type CustomerListProps = {
+  customers: CustomerType[];
+};
 
-  const safeAccounts = Array.isArray(accounts) ? accounts : [];
-
-  const customers = (safeAccounts.filter(
-    (a) => a?.isCustomer
-  ) as CustomerType[]) ?? [];
+export function CustomerList({ customers }: CustomerListProps) {
 
   if (!customers.length) {
     return (

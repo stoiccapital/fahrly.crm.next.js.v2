@@ -10,6 +10,8 @@ import { CustomerDetails } from "./CustomerDetails";
 
 import { CustomerContracts } from "./CustomerContracts";
 
+import { CustomerTickets } from "./CustomerTickets";
+
 import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 
 type Props = {
@@ -52,6 +54,7 @@ export function CustomerDetailClient({ customerId }: Props) {
         <CustomerDetails customer={customer} />
         <CustomerContracts customer={customer} />
       </div>
+      <CustomerTickets customerId={customerId} />
     </div>
   );
 }

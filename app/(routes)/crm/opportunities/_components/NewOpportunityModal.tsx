@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { CrmModal } from "../../_components/CrmModal";
+import { CrmModal } from "@/app/components/shared/layout/CrmModal";
 
 import type { OpportunityStage } from "../_types";
 

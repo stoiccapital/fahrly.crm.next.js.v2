@@ -14,7 +14,7 @@ type LeadDetailClientProps = {
 
 export function LeadDetailClient({ leadId }: LeadDetailClientProps) {
   const { leads } = useCRMStore();
-  const lead = leads.find((l) => l.id === leadId);
+  const lead = leads?.find((l) => l.id === leadId);
   const [isConvertOpen, setIsConvertOpen] = useState(false);
 
   if (!lead) {

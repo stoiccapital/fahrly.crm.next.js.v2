@@ -1,12 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
 import { useCRMStore } from "@/store/crmStore";
-
-import type { Opportunity, OpportunityStage } from "../_types";
-
-import { stageProbability } from "../../_data/mockOpportunities";
 
 import { OpportunityHeader } from "./OpportunityHeader";
 
@@ -18,67 +12,42 @@ import { OpportunityActivities } from "./OpportunityActivities";
 
 import { OpportunityTasks } from "./OpportunityTasks";
 
-import { mockContacts } from "../../../accounts/_data/mockContacts";
+import { stageProbability } from "../../_data/mockOpportunities";
 
-const contacts = mockContacts as any[];
+export default function OpportunityDetailClient({ id }: { id: string }) {
+  const { opportunities, contacts, markAccountAsCustomer, updateOpportunity } = useCRMStore();
 
-type Props = {
-  opportunity: Opportunity;
-};
+  const opportunity = opportunities?.find((o) => o.id === id);
 
-function getPrimaryContactName(accountId: string): string | undefined {
-  if (!accountId) return undefined;
+  if (!opportunity) {
+    return (
+      <div className="p-4 text-sm text-slate-500">
+        Loading opportunity...
+      </div>
+    );
+  }
 
-  // Prefer explicit "primary" flag, otherwise first contact for the account
-  const primary = contacts.find(
-    (c) => c.accountId === accountId && (c.isPrimary === true || c.primary === true)
-  );
+  const contact = contacts?.find(
+    (c) =>
+      c.accountId === opportunity.accountId &&
+      c.isPrimary === true
+  ) ?? contacts?.find((c) => c.accountId === opportunity.accountId);
 
-  const fallback = contacts.find((c) => c.accountId === accountId);
+  const contactName = contact?.name;
 
-  const contact = primary ?? fallback;
-
-  if (!contact) return undefined;
-
-  return contact.name;
-}
-
-export function OpportunityDetailClient({ opportunity: initial }: Props) {
-  const [opportunity, setOpportunity] = useState<Opportunity>(initial);
-  const [isEditingDetails, setIsEditingDetails] = useState(false);
-  const { markAccountAsCustomer } = useCRMStore();
-
-  const handleStageChange = (stage: OpportunityStage) => {
-    setOpportunity((prev) => {
-      const updated = {
-        ...prev,
-        stage,
-        probability: stageProbability[stage],
-        updatedAt: new Date().toISOString()
-      };
-
-      // When opportunity is Won, convert the related account to a customer
-      if (stage === "WON" && updated.accountId) {
-        markAccountAsCustomer(updated.accountId, updated.closeDate);
-      }
-
-      return updated;
-    });
+  const handleStageChange = (stage: any) => {
+    const probability = stageProbability[stage as keyof typeof stageProbability];
+    const updatedAt = new Date().toISOString();
+    updateOpportunity(opportunity.id, { stage, probability, updatedAt });
+    if (stage === "WON" && opportunity.accountId) {
+      markAccountAsCustomer(opportunity.accountId, opportunity.closeDate);
+    }
   };
 
   const handleCloseDateChange = (date: string) => {
-    setOpportunity((prev) => ({
-      ...prev,
-      closeDate: date,
-      updatedAt: new Date().toISOString()
-    }));
+    const updatedAt = new Date().toISOString();
+    updateOpportunity(opportunity.id, { closeDate: date, updatedAt });
   };
-
-  const toggleEditDetails = () => {
-    setIsEditingDetails((prev) => !prev);
-  };
-
-  const contactName = getPrimaryContactName(opportunity.accountId);
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -89,16 +58,16 @@ export function OpportunityDetailClient({ opportunity: initial }: Props) {
         <div className="space-y-6 lg:col-span-2">
           <OpportunityDetails
             opportunity={opportunity}
-            isEditingDetails={isEditingDetails}
-            onToggleEditDetails={toggleEditDetails}
+            onToggleEditDetails={() => {}}
             onStageChange={handleStageChange}
             onCloseDateChange={handleCloseDateChange}
             contactName={contactName}
+            isEditingDetails={false}
           />
-          <OpportunityActivities opportunityId={opportunity.id} />
+          <OpportunityActivities opportunityId={id} />
         </div>
         <div className="space-y-6">
-          <OpportunityTasks opportunityId={opportunity.id} />
+          <OpportunityTasks opportunityId={id} />
         </div>
       </div>
     </div>

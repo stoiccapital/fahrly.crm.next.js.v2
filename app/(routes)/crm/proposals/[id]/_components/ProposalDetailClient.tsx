@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useCRMStore } from "@/store/crmStore";
+
 import { ProposalHeader } from "./ProposalHeader";
 
 import { ProposalEditor } from "./ProposalEditor";
@@ -13,10 +15,7 @@ import { ProposalSignaturePaymentPanel } from "./ProposalSignaturePaymentPanel";
 import type { ProposalType, ProposalStatus } from "@/app/(routes)/crm/proposals/_types";
 
 type Props = {
-  proposal: ProposalType;
-  opportunity: any | null;
-  account: any | null;
-  contact: any | null;
+  id: string;
 };
 
 type ContractLinksState = {
@@ -24,12 +23,25 @@ type ContractLinksState = {
   stripePaymentUrl?: string;
 };
 
-export function ProposalDetailClient({
-  proposal,
-  opportunity,
-  account,
-  contact,
-}: Props) {
+export function ProposalDetailClient({ id }: Props) {
+  const { proposals, opportunities, accounts, contacts } = useCRMStore();
+
+  const proposal = proposals?.find((p) => p.id === id);
+
+  if (!proposal) {
+    return (
+      <div className="p-4 text-sm text-slate-500">
+        Loading proposal...
+      </div>
+    );
+  }
+
+  const opportunity = opportunities?.find((o) => o.id === proposal.opportunityId) ?? null;
+  const account = accounts?.find((a) => a.id === proposal.accountId) ?? null;
+  const contact = proposal.contactId
+    ? contacts?.find((c) => c.id === proposal.contactId) ?? null
+    : null;
+
   const [proposalState, setProposalState] = useState<ProposalType>(proposal);
 
   const [contractLinks, setContractLinks] = useState<ContractLinksState>({});
@@ -91,4 +103,3 @@ export function ProposalDetailClient({
     </div>
   );
 }
-

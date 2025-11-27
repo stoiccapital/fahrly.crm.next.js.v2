@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 
-import { Card, Badge, Button } from "@/app/components/shared/ui";
+import { useCRMStore } from "@/store/crmStore";
 
-import { mockProposals } from "@/app/(routes)/crm/proposals/_data/mockProposals";
+import { Card, Badge, Button } from "@/app/components/shared/ui";
 
 import type { ProposalType } from "@/app/(routes)/crm/proposals/_types";
 
@@ -28,7 +28,11 @@ function formatCurrency(amount: number, currency: string): string {
 }
 
 export function ProposalList() {
-  if (!mockProposals.length) {
+  const { proposals } = useCRMStore();
+
+  const safeProposals = (proposals ?? []) as ProposalType[];
+
+  if (!safeProposals.length) {
     return (
       <Card className="rounded-2xl border bg-white p-6 text-center shadow-sm">
         <h2 className="text-base font-semibold text-slate-900">No proposals yet</h2>
@@ -65,7 +69,7 @@ export function ProposalList() {
             </tr>
           </thead>
           <tbody>
-            {mockProposals.map((proposal) => (
+            {safeProposals.map((proposal) => (
               <tr
                 key={proposal.id}
                 className="border-t last:border-b hover:bg-slate-50/60"

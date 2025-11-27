@@ -23,10 +23,10 @@ export function AccountDetailClient({ accountId }: AccountDetailClientProps) {
 
   const { accounts, contacts } = useCRMStore();
 
-  const account = accounts.find((a) => a.id === accountId);
+  const account = accounts?.find((a) => a.id === accountId);
 
   const accountContacts = useMemo(
-    () => contacts.filter((c) => c.accountId === accountId),
+    () => (contacts ?? []).filter((c) => c.accountId === accountId),
     [contacts, accountId],
   );
 

@@ -1,9 +1,10 @@
+import "./globals.css";
+
 import type { Metadata } from "next";
-import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "CRM Application",
-  description: "Customer Relationship Management System",
+  title: "Fahrly CRM",
+  description: "Lightweight CRM for the Fahrly stack",
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-slate-50">
+        {children}
+      </body>
     </html>
   );
 }

@@ -11,6 +11,7 @@ const links = [
   { href: "/crm/proposals", label: "Proposals" },
   { href: "/crm/customers", label: "Customers" },
   { href: "/crm/tasks", label: "Tasks" },
+  { href: "/crm/tickets", label: "Tickets" },
   { href: "/crm/reporting", label: "Reporting" },
 ];
 

@@ -2,10 +2,9 @@
 
 import type { ReactNode } from 'react';
 
-import "@/styles/globals.css";
 import { CRMProvider } from '@/store/crmStore';
-import { CrmSidebar } from "./_components/CrmSidebar";
-import { CrmHeader } from "./_components/CrmHeader";
+import { CrmSidebar } from "@/app/components/shared/layout/CrmSidebar";
+import { CrmHeader } from "@/app/components/shared/layout/CrmHeader";
 
 type CRMLayoutProps = {
   children: ReactNode;
