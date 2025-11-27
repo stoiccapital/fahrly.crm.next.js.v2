@@ -47,7 +47,7 @@ export function ProposalEditor({ proposal, onChange }: Props) {
       const value = event.target.value;
       if (key === "amount") {
         const numeric = Number(value.replace(",", "."));
-        handleFieldChange(key)(Number.isNaN(numeric) ? 0 : numeric as ProposalType[K]);
+        onChange({ ...proposal, amount: Number.isNaN(numeric) ? 0 : numeric });
       } else if (key === "startDate" || key === "endDate") {
         handleFieldChange(key)(value as ProposalType[K]);
       } else {
