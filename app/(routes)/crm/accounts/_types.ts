@@ -21,6 +21,9 @@ export type AccountType = {
   createdAt: string;            // ISO date
   source?: string;              // lead source / signup source
   summary?: string;             // key account summary shown at the top
+  isCustomer: boolean;
+  customerSince?: string | null;
+  stripeCustomerId?: string | null;
 };
 
 export type ContactType = {

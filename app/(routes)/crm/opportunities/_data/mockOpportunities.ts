@@ -132,3 +132,6 @@ export const stageProbability: Record<OpportunityStage, number> = {
   WON: 1,         // 100%
   LOST: 0         // 0%
 };
+
+// Alias export for compatibility
+export const mockOpportunities = opportunities;

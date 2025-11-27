@@ -6,6 +6,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -24,6 +25,17 @@ import { mockContacts } from '@/app/(routes)/crm/accounts/_data/mockContacts';
 import { mockNotes } from '@/app/(routes)/crm/accounts/_data/mockNotes';
 
 const SUMMARY_CHAR_LIMIT = 250;
+
+const CRM_STORAGE_KEY = "fahrly-crm-state-v1";
+
+type CRMStorageShape = {
+  leads?: any[];
+  accounts?: any[];
+  opportunities?: any[];
+  contacts?: any[];
+  notes?: any[];
+  proposals?: any[];
+};
 
 type ConvertLeadAccountData = {
   legalCompanyName: string;
@@ -92,6 +104,7 @@ type CRMContextValue = {
   updateContactSummary: (contactId: string, summary: string) => void;
   updateAccountDetails: (input: UpdateAccountDetailsInput) => void;
   updateContactDetails: (input: UpdateContactDetailsInput) => void;
+  markAccountAsCustomer: (accountId: string, customerSince?: string) => void;
 };
 
 const CRMContext = createContext<CRMContextValue | undefined>(undefined);
@@ -105,6 +118,68 @@ export function CRMProvider({ children }: CRMProviderProps) {
   const [accounts, setAccounts] = useState<AccountType[]>(mockAccounts);
   const [contacts, setContacts] = useState<ContactType[]>(mockContacts);
   const [notes, setNotes] = useState<NoteType[]>(mockNotes);
+
+  // Restore state from localStorage on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const raw = window.localStorage.getItem(CRM_STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as CRMStorageShape;
+
+      if (parsed.leads && Array.isArray(parsed.leads)) {
+        setLeads(parsed.leads as any);
+      }
+
+      if (parsed.accounts && Array.isArray(parsed.accounts)) {
+        setAccounts(parsed.accounts as any);
+      }
+
+      if (parsed.opportunities && Array.isArray(parsed.opportunities)) {
+        // If you later add opportunities to the store, restore them here:
+        // setOpportunities(parsed.opportunities as any);
+      }
+
+      if (parsed.contacts && Array.isArray(parsed.contacts)) {
+        setContacts(parsed.contacts as any);
+      }
+
+      if (parsed.notes && Array.isArray(parsed.notes)) {
+        setNotes(parsed.notes as any);
+      }
+
+      // If you later add proposals to the store, you can restore them here too:
+      // if (parsed.proposals && Array.isArray(parsed.proposals)) {
+      //   setProposals(parsed.proposals as any);
+      // }
+    } catch (error) {
+      console.error("Failed to restore CRM state from localStorage", error);
+    }
+  }, []);
+
+  // Persist state to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const payload: CRMStorageShape = {
+      leads,
+      accounts,
+      // If you later add opportunities to the store, include them here:
+      // opportunities,
+      contacts,
+      notes,
+      // If you later add proposals to the store, include them here:
+      // proposals,
+    };
+
+    try {
+      window.localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(payload));
+    } catch (error) {
+      console.error("Failed to persist CRM state to localStorage", error);
+    }
+  }, [leads, accounts, contacts, notes]);
 
   const convertLeadToAccount = useCallback(
     (options: { leadId: string; accountData: ConvertLeadAccountData }) => {
@@ -138,6 +213,9 @@ export function CRMProvider({ children }: CRMProviderProps) {
               0,
               SUMMARY_CHAR_LIMIT,
             ),
+          isCustomer: true,
+          customerSince: new Date().toISOString(),
+          stripeCustomerId: null,
         };
 
         setAccounts((prevAccounts) => [...prevAccounts, newAccount]);
@@ -302,6 +380,25 @@ export function CRMProvider({ children }: CRMProviderProps) {
     [],
   );
 
+  const markAccountAsCustomer = useCallback(
+    (accountId: string, customerSince?: string) => {
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account.id === accountId
+            ? {
+                ...account,
+                isCustomer: true,
+                customerSince:
+                  customerSince ?? account.customerSince ?? new Date().toISOString(),
+                status: 'customer',
+              }
+            : account
+        ),
+      );
+    },
+    [],
+  );
+
   const value = useMemo(
     () => ({
       leads,
@@ -316,8 +413,9 @@ export function CRMProvider({ children }: CRMProviderProps) {
       updateContactSummary,
       updateAccountDetails,
       updateContactDetails,
+      markAccountAsCustomer,
     }),
-    [leads, accounts, contacts, notes, convertLeadToAccount, addContact, moveAccountToLead, addNote, updateAccountSummary, updateContactSummary, updateAccountDetails, updateContactDetails],
+    [leads, accounts, contacts, notes, convertLeadToAccount, addContact, moveAccountToLead, addNote, updateAccountSummary, updateContactSummary, updateAccountDetails, updateContactDetails, markAccountAsCustomer],
   );
 
   return <CRMContext.Provider value={value}>{children}</CRMContext.Provider>;

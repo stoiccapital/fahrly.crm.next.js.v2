@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useCRMStore } from "@/store/crmStore";
+
 import type { Opportunity, OpportunityStage } from "../_types";
 
 import { stageProbability } from "../../_data/mockOpportunities";
@@ -44,14 +46,24 @@ function getPrimaryContactName(accountId: string): string | undefined {
 export function OpportunityDetailClient({ opportunity: initial }: Props) {
   const [opportunity, setOpportunity] = useState<Opportunity>(initial);
   const [isEditingDetails, setIsEditingDetails] = useState(false);
+  const { markAccountAsCustomer } = useCRMStore();
 
   const handleStageChange = (stage: OpportunityStage) => {
-    setOpportunity((prev) => ({
-      ...prev,
-      stage,
-      probability: stageProbability[stage],
-      updatedAt: new Date().toISOString()
-    }));
+    setOpportunity((prev) => {
+      const updated = {
+        ...prev,
+        stage,
+        probability: stageProbability[stage],
+        updatedAt: new Date().toISOString()
+      };
+
+      // When opportunity is Won, convert the related account to a customer
+      if (stage === "WON" && updated.accountId) {
+        markAccountAsCustomer(updated.accountId, updated.closeDate);
+      }
+
+      return updated;
+    });
   };
 
   const handleCloseDateChange = (date: string) => {

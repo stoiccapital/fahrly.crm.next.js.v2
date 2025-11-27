@@ -20,6 +20,9 @@ export const mockAccounts: AccountType[] = [
     createdAt: '2024-03-12T09:15:00.000Z',
     source: 'Direct / Self-signup',
     summary: 'Key Uber subcontractor in Berlin with 80+ vehicles. Focus on uptime and safety.',
+    isCustomer: true,
+    customerSince: '2024-03-12',
+    stripeCustomerId: 'cus_123456789',
   },
   {
     id: 'acc-munich-shuttle',
@@ -38,6 +41,9 @@ export const mockAccounts: AccountType[] = [
     createdAt: '2024-05-01T11:30:00.000Z',
     source: 'Inbound',
     summary: 'Prospect focused on airport shuttles. Early stage conversations.',
+    isCustomer: false,
+    customerSince: null,
+    stripeCustomerId: null,
   },
   {
     id: 'acc-zurich-ride',
@@ -56,5 +62,8 @@ export const mockAccounts: AccountType[] = [
     createdAt: '2023-11-20T14:45:00.000Z',
     source: 'Partner referral',
     summary: 'High-quality Swiss fleet with strong NPS; candidate for expansion and upsell.',
+    isCustomer: true,
+    customerSince: '2023-11-20',
+    stripeCustomerId: 'cus_987654321',
   },
 ];
