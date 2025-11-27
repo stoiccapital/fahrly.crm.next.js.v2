@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { CrmModal } from "../../_components/CrmModal";
 
+import { Input, Select, Textarea, Button } from "@/app/components/shared/ui";
+
 import { Lead, LeadSource, LeadStatus } from "../_types";
 
 type LeadFormModalProps = {
@@ -125,11 +127,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Company name *
             </label>
-            <input
+            <Input
               type="text"
               value={form.companyName}
               onChange={(e) => handleChange("companyName", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. Miller Taxi GmbH"
               required
             />
@@ -139,11 +140,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Contact name *
             </label>
-            <input
+            <Input
               type="text"
               value={form.contactName}
               onChange={(e) => handleChange("contactName", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. John Miller"
               required
             />
@@ -153,11 +153,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Contact email
             </label>
-            <input
+            <Input
               type="email"
               value={form.contactEmail}
               onChange={(e) => handleChange("contactEmail", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="name@company.com"
             />
           </div>
@@ -166,11 +165,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Contact phone
             </label>
-            <input
+            <Input
               type="tel"
               value={form.contactPhone}
               onChange={(e) => handleChange("contactPhone", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="+41 ..."
             />
           </div>
@@ -179,52 +177,49 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Source
             </label>
-            <select
+            <Select
               value={form.source}
               onChange={(e) =>
                 handleChange("source", e.target.value as LeadSource)
               }
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             >
               {sourceOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Status
             </label>
-            <select
+            <Select
               value={form.status}
               onChange={(e) =>
                 handleChange("status", e.target.value as LeadStatus)
               }
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Estimated fleet size
             </label>
-            <input
+            <Input
               type="number"
               min={0}
               value={form.estimatedFleetSize}
               onChange={(e) =>
                 handleChange("estimatedFleetSize", e.target.value)
               }
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. 25"
             />
           </div>
@@ -233,11 +228,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Country
             </label>
-            <input
+            <Input
               type="text"
               value={form.country}
               onChange={(e) => handleChange("country", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. DE, CH, AT"
             />
           </div>
@@ -246,11 +240,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               City
             </label>
-            <input
+            <Input
               type="text"
               value={form.city}
               onChange={(e) => handleChange("city", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. Berlin"
             />
           </div>
@@ -259,11 +252,10 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
             <label className="mb-1 block text-xs font-medium text-gray-700">
               Owner
             </label>
-            <input
+            <Input
               type="text"
               value={form.owner}
               onChange={(e) => handleChange("owner", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. Anh Chu"
             />
           </div>
@@ -273,29 +265,26 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           <label className="mb-1 block text-xs font-medium text-gray-700">
             Notes
           </label>
-          <textarea
+          <Textarea
             value={form.notes}
             onChange={(e) => handleChange("notes", e.target.value)}
             rows={3}
-            className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             placeholder="Context, pain points, next steps..."
           />
         </div>
 
         <div className="mt-4 flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={handleClose}
-            className="rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
             Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-          >
+          </Button>
+          <Button type="submit" size="sm">
             Create lead
-          </button>
+          </Button>
         </div>
       </form>
     </CrmModal>

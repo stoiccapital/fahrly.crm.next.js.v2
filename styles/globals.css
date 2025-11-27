@@ -1,3 +1,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Design tokens for CRM / Fahrly style */
+
+:root {
+  /* Colors */
+  --color-bg-body: 245 245 245; /* gray-100-ish */
+  --color-bg-surface: 255 255 255; /* white */
+  --color-border-subtle: 229 231 235; /* gray-200 */
+  --color-border-strong: 17 24 39; /* gray-900 */
+  --color-text-main: 17 24 39; /* gray-900 */
+  --color-text-muted: 107 114 128; /* gray-500 */
+  --color-accent: 37 99 235; /* blue-600 */
+  --color-accent-soft: 59 130 246; /* blue-500 */
+  --color-positive: 5 150 105; /* emerald-600 */
+  --color-negative: 225 29 72; /* rose-600 */
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+
+  /* Shadows */
+  --shadow-soft: 0 1px 2px 0 rgb(15 23 42 / 0.04),
+    0 1px 3px 0 rgb(15 23 42 / 0.08);
+  --shadow-medium: 0 8px 24px rgb(15 23 42 / 0.12);
+
+  /* Spacing scale (for custom utilities if needed) */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+}
+
+body {
+  @apply bg-gray-100 text-gray-900 antialiased;
+  background-color: rgb(var(--color-bg-body));
+}
+
+/* Base typography for page titles / subtitles */
+.page-title {
+  @apply text-xl font-semibold text-gray-900;
+}
+
+.page-subtitle {
+  @apply mt-1 text-sm text-gray-500;
+}
+
+/* Generic utility cards (optional, but used by shared Card) */
+.crm-card {
+  @apply rounded-2xl border border-gray-200 bg-white p-5 shadow-sm;
+}
+
+.crm-card-header {
+  @apply mb-3 flex items-center justify-between;
+}
+
+.crm-card-title {
+  @apply text-sm font-semibold text-gray-900;
+}
+
+.crm-section-label {
+  @apply text-xs font-medium uppercase tracking-wide text-gray-500;
+}
