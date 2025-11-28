@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import type { Opportunity } from "../_types";
 
-import { formatStage } from "../_data/mockOpportunities";
+import { formatStage } from "../_utils";
 
 type Props = {
   items: Opportunity[];

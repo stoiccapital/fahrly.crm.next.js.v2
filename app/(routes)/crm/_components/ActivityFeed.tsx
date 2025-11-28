@@ -1,7 +1,7 @@
 "use client";
 
 import { ActivityItem } from "../_types";
-import { Card, Badge } from "@/app/components/shared/ui";
+import { Badge } from "@/app/components/shared/ui";
 
 type Props = {
   items: ActivityItem[];
@@ -9,42 +9,34 @@ type Props = {
 
 export function ActivityFeed({ items }: Props) {
   return (
-    <Card className="flex h-full flex-col rounded-2xl border bg-white p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-base font-semibold">Activity</h2>
-        <span className="text-xs text-gray-500">
-          Latest CRM, product, and support events.
-        </span>
-      </div>
-      <div className="flex-1 space-y-2 overflow-auto text-xs">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-start justify-between gap-3 rounded-xl bg-gray-50 p-3"
-          >
-            <div>
-              <div className="mb-0.5 flex items-center gap-2">
-                <span className="font-medium text-gray-800">
-                  {item.title}
-                </span>
-                <TypeBadge type={item.type} />
-              </div>
-              <div className="text-gray-500">
-                {item.description}
-              </div>
+    <div className="flex-1 space-y-2 overflow-auto">
+      {items.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-start justify-between gap-3 rounded-xl border border-slate-200/70 bg-slate-50/50 p-3 transition-colors hover:bg-slate-50"
+        >
+          <div className="flex-1 min-w-0">
+            <div className="mb-0.5 flex items-center gap-2">
+              <span className="text-xs font-medium text-slate-900 truncate">
+                {item.title}
+              </span>
+              <TypeBadge type={item.type} />
             </div>
-            <div className="shrink-0 text-[10px] text-gray-400">
-              {item.timeAgo}
+            <div className="text-xs text-slate-500">
+              {item.description}
             </div>
           </div>
-        ))}
-        {!items.length && (
-          <div className="rounded-xl bg-gray-50 p-3 text-center text-xs text-gray-500">
-            No recent activity.
+          <div className="shrink-0 text-[10px] text-slate-400">
+            {item.timeAgo}
           </div>
-        )}
-      </div>
-    </Card>
+        </div>
+      ))}
+      {!items.length && (
+        <div className="rounded-xl border border-slate-200/70 bg-slate-50/50 p-3 text-center text-xs text-slate-500">
+          No recent activity.
+        </div>
+      )}
+    </div>
   );
 }
 

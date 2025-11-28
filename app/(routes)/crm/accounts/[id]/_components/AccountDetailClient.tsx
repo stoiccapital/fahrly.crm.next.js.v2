@@ -21,13 +21,21 @@ type AccountDetailClientProps = {
 export function AccountDetailClient({ accountId }: AccountDetailClientProps) {
   const router = useRouter();
 
-  const { accounts, contacts } = useCRMStore();
+  const { accounts, contacts, notes } = useCRMStore();
 
   const account = accounts?.find((a) => a.id === accountId);
 
   const accountContacts = useMemo(
     () => (contacts ?? []).filter((c) => c.accountId === accountId),
     [contacts, accountId],
+  );
+
+  const accountNotes = useMemo(
+    () =>
+      (notes ?? []).filter(
+        (n) => n.targetType === 'account' && n.targetId === accountId,
+      ),
+    [notes, accountId],
   );
 
   if (!account) {
@@ -56,6 +64,35 @@ export function AccountDetailClient({ accountId }: AccountDetailClientProps) {
           <AccountInfoSection account={account} />
           <AccountContactsSection account={account} contacts={accountContacts} />
         </div>
+
+        {/* Account Notes Section */}
+        <section className="rounded-2xl border bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold">Notes</h2>
+          {accountNotes.length === 0 ? (
+            <p className="mt-3 text-sm text-gray-500">No notes yet.</p>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {accountNotes.map((note: any) => (
+                <li
+                  key={note.id}
+                  className="rounded-xl border bg-gray-50 p-3 text-sm"
+                >
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>{note.author || 'Unknown'}</span>
+                    {note.createdAt && (
+                      <span>
+                        {new Date(note.createdAt).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-2 whitespace-pre-line text-gray-800">
+                    {note.content}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </main>
   );

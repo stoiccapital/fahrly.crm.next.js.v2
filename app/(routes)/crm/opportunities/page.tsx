@@ -1,91 +1,85 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 
-import { useCRMStore } from "@/store/crmStore";
-
-import { stageProbability } from "./_data/mockOpportunities";
-
-import { OpportunityList } from "./_components/OpportunityList";
-
-import { NewOpportunityModal } from "./_components/NewOpportunityModal";
-
-import type { OpportunityStage, OpportunityStatus } from "./_types";
+import { useCRMStore, type Opportunity } from "@/store/crmStore";
 
 export default function OpportunitiesPage() {
-  const { opportunities, accounts, addOpportunity } = useCRMStore();
-  const [open, setOpen] = useState(false);
+  const opportunities = useCRMStore(
+    (state) => (state.opportunities || []) as Opportunity[]
+  );
 
-  const safeOpportunities = (opportunities ?? []) as any[];
-  const safeAccounts = (accounts ?? []) as any[];
-
-  const createOpportunity = (data: {
-    name: string;
-    accountId: string;
-    amount: number;
-    currency: string;
-    closeDate: string;
-    stage: OpportunityStage;
-    owner: string;
-    description?: string;
-  }) => {
-    const stage = data.stage;
-    const probability = stageProbability[stage];
-
-    const account = safeAccounts.find((a) => a.id === data.accountId);
-
-    const accountName =
-      account?.companyName || account?.legalCompanyName || "Unknown account";
-
-    const now = new Date().toISOString().slice(0, 10);
-
-    const status: OpportunityStatus = stage === "WON" ? "Closed Won" : stage === "LOST" ? "Closed Lost" : "Open";
-    const currency: "EUR" | "USD" | "CHF" = data.currency as "EUR" | "USD" | "CHF";
-
-    const newOpp = {
-      ...data,
-      id: "opp-" + Math.random().toString(36).slice(2, 8),
-      accountName,
-      createdAt: now,
-      updatedAt: now,
-      probability,
-      status,
-      currency
-    };
-
-    addOpportunity(newOpp);
-  };
+  if (!opportunities.length) {
+    return (
+      <div className="p-6">
+        <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <h1 className="text-2xl font-semibold">Opportunities</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            No opportunities in the pipeline yet.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {open && (
-        <NewOpportunityModal
-          isOpen={open}
-          onClose={() => setOpen(false)}
-          onCreate={createOpportunity}
-          accounts={safeAccounts.map((a) => ({
-            id: a.id,
-            name: a.companyName || a.legalCompanyName || "Unknown account"
-          }))}
-        />
-      )}
-      <div className="flex flex-1 flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">Opportunities</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Track your pipeline, forecast, and sales progress.
-            </p>
-          </div>
-          <button
-            className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black"
-            onClick={() => setOpen(true)}
-          >
-            New Opportunity
-          </button>
-        </div>
-        <OpportunityList items={safeOpportunities} />
+    <div className="p-6 space-y-4">
+      <div className="rounded-2xl border bg-white p-6 shadow-sm">
+        <h1 className="text-2xl font-semibold">Opportunities</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Pipeline view of all open and closed deals.
+        </p>
       </div>
-    </>
+      <div className="rounded-2xl border bg-white p-4 shadow-sm">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b text-xs uppercase text-gray-500">
+            <tr>
+              <th className="py-2">Opportunity</th>
+              <th className="py-2">Account</th>
+              <th className="py-2">Amount</th>
+              <th className="py-2">Stage</th>
+              <th className="py-2">Close date</th>
+              <th className="py-2"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {opportunities.map((opp) => (
+              <tr key={opp.id} className="align-top">
+                <td className="py-2">
+                  <div className="font-medium text-gray-900">
+                    {opp.name}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {opp.source} · {opp.segment}
+                  </div>
+                </td>
+                <td className="py-2 text-sm text-gray-700">
+                  {(opp as any).accountName || opp.accountId}
+                </td>
+                <td className="py-2 text-sm text-gray-700">
+                  €{opp.amount}
+                </td>
+                <td className="py-2 text-sm">
+                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">
+                    {opp.stage}
+                  </span>
+                </td>
+                <td className="py-2 text-sm text-gray-700">
+                  {opp.closeDate}
+                </td>
+                <td className="py-2 text-right text-xs">
+                  <Link
+                    href={`/crm/opportunities/${opp.id}`}
+                    className="rounded-full border px-3 py-1 font-medium text-gray-900 hover:bg-gray-50"
+                  >
+                    Details
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { SaaSOverviewMetrics } from "../_types";
+import { SaaSOverviewMetrics } from "@/app/(routes)/crm/_types";
 
 export const mockSaaSMetrics: SaaSOverviewMetrics = {
   companyPulse: {

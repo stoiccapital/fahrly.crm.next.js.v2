@@ -1,10 +1,6 @@
-'use client';
+import type { ReactNode } from "react";
 
-import type { ReactNode } from 'react';
-
-import { CRMProvider } from '@/store/crmStore';
-import { CrmSidebar } from "@/app/components/shared/layout/CrmSidebar";
-import { CrmHeader } from "@/app/components/shared/layout/CrmHeader";
+import CRMNavbar from "./_components/CRMNavbar";
 
 type CRMLayoutProps = {
   children: ReactNode;
@@ -12,17 +8,13 @@ type CRMLayoutProps = {
 
 export default function CRMLayout({ children }: CRMLayoutProps) {
   return (
-    <CRMProvider>
-      <div className="flex h-screen">
-        <CrmSidebar />
-        <div className="flex flex-col flex-1">
-          <CrmHeader />
-          <main className="flex-1 bg-gray-50 p-6 overflow-y-auto">
-            {children}
-          </main>
-        </div>
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto flex max-w-7xl">
+        <CRMNavbar />
+        <main className="flex-1 overflow-y-auto">
+          <div className="px-4 py-6 md:px-8 md:py-10">{children}</div>
+        </main>
       </div>
-    </CRMProvider>
+    </div>
   );
 }
-

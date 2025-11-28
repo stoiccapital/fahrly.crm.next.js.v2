@@ -1,11 +1,9 @@
 import HomeDashboardClient from "./_components/HomeDashboardClient";
-import { mockSaaSMetrics } from "./_data/mockSaaSMetrics";
 
-export default function CrmHomePage() {
+export default function CRMOverviewPage() {
   return (
-    <div className="p-4 md:p-6">
-      <HomeDashboardClient metrics={mockSaaSMetrics} />
+    <div className="space-y-6">
+      <HomeDashboardClient />
     </div>
   );
 }
-

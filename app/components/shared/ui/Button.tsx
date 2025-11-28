@@ -1,52 +1,57 @@
 "use client";
 
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
-
-type ButtonSize = "sm" | "md";
+type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  fullWidth?: boolean;
 };
 
-const baseClasses =
-  "inline-flex items-center justify-center rounded-2xl text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60";
-
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-gray-900 text-white hover:bg-black focus:ring-gray-900",
+  primary:
+    "bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-900",
   secondary:
-    "border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 focus:ring-gray-200",
-  ghost: "text-gray-600 hover:bg-gray-100 focus:ring-gray-200",
+    "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 focus-visible:ring-slate-400",
+  ghost:
+    "bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400",
   danger:
-    "bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-600"
+    "bg-red-600 text-white hover:bg-red-500 focus-visible:ring-red-600",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "px-3 py-1.5",
-  md: "px-4 py-2"
+  sm: "h-8 px-3 text-xs",
+  md: "h-9 px-4 text-sm",
+  lg: "h-10 px-5 text-sm",
+  icon: "h-9 w-9 p-0",
 };
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button(
-    { className, variant = "primary", size = "md", ...props },
-    ref
-  ) {
-    return (
-      <button
-        ref={ref}
-        className={cn(
-          baseClasses,
-          variantClasses[variant],
-          sizeClasses[size],
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
+export function Button({
+  className,
+  variant = "primary",
+  size = "md",
+  fullWidth,
+  type = "button",
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      type={type}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        variantClasses[variant],
+        sizeClasses[size],
+        fullWidth && "w-full",
+        className
+      )}
+      {...props}
+    />
+  );
+}
 

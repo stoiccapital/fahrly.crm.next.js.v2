@@ -1,9 +1,9 @@
-import { ProposalList } from "./_components/ProposalList";
+import { ProposalsTable } from "./_components/ProposalsTable";
 
 export default function ProposalsPage() {
   return (
-    <div className="p-4 md:p-6">
-      <ProposalList />
+    <div className="space-y-4">
+      <ProposalsTable />
     </div>
   );
 }

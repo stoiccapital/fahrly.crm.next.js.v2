@@ -1,5 +1,9 @@
 import OpportunityDetailClient from "./_components/OpportunityDetailClient";
 
-export default function OpportunityDetailPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string };
+};
+
+export default function Page({ params }: PageProps) {
   return <OpportunityDetailClient id={params.id} />;
 }

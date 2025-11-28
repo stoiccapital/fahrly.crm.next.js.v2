@@ -1,14 +1,10 @@
-'use client';
-
-import { AccountList } from './_components/AccountList';
-import { useCRMStore } from '@/store/crmStore';
+import { AccountsTable } from "./_components/AccountsTable";
 
 export default function AccountsPage() {
-  const { accounts } = useCRMStore();
-
   return (
-    <main className="mx-auto max-w-6xl px-4 py-6 lg:px-0">
-      <AccountList accounts={accounts} />
-    </main>
+    <div className="space-y-4">
+      <AccountsTable />
+    </div>
   );
 }
+

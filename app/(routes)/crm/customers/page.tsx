@@ -2,18 +2,12 @@
 
 import { useCRMStore } from "@/store/crmStore";
 
-import { CustomerList } from "./_components/CustomerList";
-
-import type { CustomerType } from "./_types";
+import { CustomersTable } from "./_components/CustomersTable";
 
 export default function CustomersPage() {
-  const { accounts } = useCRMStore();
-
-  const customers = accounts.filter((account) => account.isCustomer) as CustomerType[];
-
   return (
-    <div className="h-full">
-      <CustomerList customers={customers} />
+    <div className="space-y-4">
+      <CustomersTable />
     </div>
   );
 }

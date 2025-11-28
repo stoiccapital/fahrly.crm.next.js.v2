@@ -6,7 +6,7 @@ import { CrmModal } from "@/app/components/shared/layout/CrmModal";
 
 import type { OpportunityStage } from "../_types";
 
-import { stageOrder, formatStage } from "../_data/mockOpportunities";
+import { stageOrder, formatStage } from "../_utils";
 
 type NewOpportunityModalProps = {
   isOpen: boolean;
