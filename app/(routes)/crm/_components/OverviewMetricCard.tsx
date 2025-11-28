@@ -20,13 +20,16 @@ export function OverviewMetricCard({
   trendValue,
   trendDirection = "neutral",
 }: OverviewMetricCardProps) {
+  const trendColorClass =
+    trendDirection === "up"
+      ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+      : trendDirection === "down"
+      ? "border-rose-100 bg-rose-50 text-rose-700"
+      : "border-slate-200 bg-slate-100 text-slate-700";
+
   const trendClasses = cn(
     "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium",
-    {
-      "border-emerald-100 bg-emerald-50 text-emerald-700": trendDirection === "up",
-      "border-rose-100 bg-rose-50 text-rose-700": trendDirection === "down",
-      "border-slate-200 bg-slate-100 text-slate-700": trendDirection === "neutral",
-    }
+    trendColorClass
   );
 
   return (
