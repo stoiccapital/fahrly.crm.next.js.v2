@@ -472,13 +472,15 @@ function ContactItem({ contact }: ContactItemProps) {
                   </p>
                   <p className="mt-1 text-[10px] text-slate-500">
                     {note.author || "Unknown"} ·{" "}
-                    {new Date(note.createdAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {note.createdAt
+                      ? new Date(note.createdAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Just now"}
                   </p>
                 </div>
               ))
