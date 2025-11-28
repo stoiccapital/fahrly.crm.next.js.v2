@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 import { CrmModal } from "@/app/components/shared/layout/CrmModal";
+import { Input, Select, Textarea, Button } from "@/app/components/shared/ui";
 
 import type { OpportunityStage } from "../_types";
-
 import { stageOrder, formatStage } from "../_utils";
 
 type NewOpportunityModalProps = {
@@ -108,34 +108,32 @@ export function NewOpportunityModal({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
             {error}
           </div>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Opportunity name *
             </label>
-            <input
+            <Input
               type="text"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. Dashcam rollout Switzerland"
               required
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Account *
             </label>
-            <select
+            <Select
               value={form.accountId}
               onChange={(e) => handleChange("accountId", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               required
             >
               <option value="">Select an account...</option>
@@ -144,63 +142,59 @@ export function NewOpportunityModal({
                   {a.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Amount *
             </label>
-            <input
+            <Input
               type="number"
               min={0}
               value={form.amount}
               onChange={(e) => handleChange("amount", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. 48000"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Currency *
             </label>
-            <select
+            <Select
               value={form.currency}
               onChange={(e) => handleChange("currency", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               required
             >
               <option value="EUR">EUR</option>
               <option value="CHF">CHF</option>
               <option value="USD">USD</option>
-            </select>
+            </Select>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Expected close date *
             </label>
-            <input
+            <Input
               type="date"
               value={form.closeDate}
               onChange={(e) => handleChange("closeDate", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               required
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Stage *
             </label>
-            <select
+            <Select
               value={form.stage}
               onChange={(e) =>
                 handleChange("stage", e.target.value as OpportunityStage)
               }
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               required
             >
               {stageOrder.map((s) => (
@@ -208,18 +202,17 @@ export function NewOpportunityModal({
                   {formatStage(s)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Owner *
             </label>
-            <input
+            <Input
               type="text"
               value={form.owner}
               onChange={(e) => handleChange("owner", e.target.value)}
-              className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               placeholder="e.g. Anh Chu"
               required
             />
@@ -227,32 +220,29 @@ export function NewOpportunityModal({
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
             Description
           </label>
-          <textarea
+          <Textarea
             value={form.description}
             onChange={(e) => handleChange("description", e.target.value)}
             rows={3}
-            className="w-full rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
             placeholder="Context, key stakeholders, risks..."
           />
         </div>
 
         <div className="mt-4 flex items-center justify-end gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={handleClose}
-            className="rounded-2xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
             Cancel
-          </button>
-          <button
-            type="submit"
-            className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-          >
+          </Button>
+          <Button type="submit" size="sm">
             Create opportunity
-          </button>
+          </Button>
         </div>
       </form>
     </CrmModal>

@@ -50,13 +50,6 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   const rows = Array.isArray(data) ? data : [];
 
-  // 🔍 Debug log
-  console.log("📊 DataTable render", {
-    title,
-    rowsCount: rows.length,
-    rowsPreview: rows.slice(0, 2),
-  });
-
   const hasRows = rows.length > 0;
 
   return (
@@ -72,10 +65,6 @@ export function DataTable<T>({
             {subtitle && (
               <p className="text-xs text-slate-500">{subtitle}</p>
             )}
-            {/* 👇 Visible debug info */}
-            <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">
-              Rows: {rows.length}
-            </p>
           </div>
           {toolbar && <div className="flex items-center gap-2">{toolbar}</div>}
         </div>

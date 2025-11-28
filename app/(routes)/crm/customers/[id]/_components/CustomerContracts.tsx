@@ -1,5 +1,5 @@
-import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 import { Card } from "@/app/components/shared/ui";
+import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 
 type Props = {
   customer: CustomerType;
@@ -7,12 +7,11 @@ type Props = {
 
 export function CustomerContracts({ customer }: Props) {
   return (
-    <Card className="rounded-2xl border bg-white p-5 shadow-sm">
-      <h2 className="mb-3 text-sm font-semibold text-gray-900">Contracts</h2>
-      <div className="text-sm text-gray-500">
+    <Card className="p-6">
+      <h2 className="mb-4 text-sm font-semibold text-slate-900">Contracts</h2>
+      <p className="text-sm text-slate-500">
         No contracts available yet.
-      </div>
+      </p>
     </Card>
   );
 }
-

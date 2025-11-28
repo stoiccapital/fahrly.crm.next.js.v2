@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
+import { Card, Button } from "@/app/components/shared/ui";
 import { useCRMStore } from "@/store/crmStore";
 
 import { ProposalHeader } from "./ProposalHeader";
-
 import { ProposalEditor } from "./ProposalEditor";
-
 import { ProposalSummary } from "./ProposalSummary";
-
 import { ProposalSignaturePaymentPanel } from "./ProposalSignaturePaymentPanel";
 
 import type { ProposalType, ProposalStatus } from "@/app/(routes)/crm/proposals/_types";
@@ -24,14 +23,27 @@ type ContractLinksState = {
 };
 
 export function ProposalDetailClient({ id }: Props) {
+  const router = useRouter();
   const { proposals, opportunities, accounts, contacts } = useCRMStore();
 
   const proposal = proposals?.find((p) => p.id === id);
 
   if (!proposal) {
     return (
-      <div className="p-4 text-sm text-slate-500">
-        Loading proposal...
+      <div className="max-w-7xl mx-auto">
+        <Card className="p-6">
+          <p className="text-sm text-slate-500">
+            Proposal not found. It may have been deleted.
+          </p>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => router.push("/crm/proposals")}
+            className="mt-3"
+          >
+            Back to proposals
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -72,7 +84,7 @@ export function ProposalDetailClient({ id }: Props) {
   };
 
   return (
-    <div className="space-y-4 p-4 md:p-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       <ProposalHeader
         proposal={proposalState}
         opportunity={opportunity}
@@ -80,10 +92,10 @@ export function ProposalDetailClient({ id }: Props) {
         onStatusChange={handleStatusChange}
       />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid gap-6 lg:grid-cols-[2fr,1.5fr] lg:items-start">
         <ProposalEditor proposal={proposalState} onChange={setProposalState} />
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <ProposalSummary
             proposal={proposalState}
             opportunity={opportunity}

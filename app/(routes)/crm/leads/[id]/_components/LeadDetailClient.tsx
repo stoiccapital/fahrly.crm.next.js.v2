@@ -3,6 +3,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Card } from "@/app/components/shared/ui";
 import { useCRMStore } from '@/store/crmStore';
 import { LeadDetailHeader } from './LeadDetailHeader';
 import { LeadDetailForm } from './LeadDetailForm';
@@ -19,28 +20,28 @@ export function LeadDetailClient({ leadId }: LeadDetailClientProps) {
 
   if (!lead) {
     return (
-      <main className="mx-auto max-w-4xl px-4 py-6 lg:px-0">
-        <div className="rounded-2xl border bg-white p-6 text-sm text-gray-500 shadow-sm">
-          Lead not found. It may have been converted or deleted.
-        </div>
-      </main>
+      <div className="max-w-7xl mx-auto">
+        <Card className="p-6">
+          <p className="text-sm text-slate-500">
+            Lead not found. It may have been converted or deleted.
+          </p>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-6 lg:px-0">
-      <div className="space-y-6">
-        <LeadDetailHeader 
-          lead={lead} 
-          onConvert={() => setIsConvertOpen(true)} 
-        />
-        <LeadDetailForm initialLead={lead} />
-        <LeadConvertModal 
-          lead={lead} 
-          isOpen={isConvertOpen}
-          onClose={() => setIsConvertOpen(false)}
-        />
-      </div>
-    </main>
+    <div className="max-w-7xl mx-auto space-y-6">
+      <LeadDetailHeader 
+        lead={lead} 
+        onConvert={() => setIsConvertOpen(true)} 
+      />
+      <LeadDetailForm initialLead={lead} />
+      <LeadConvertModal 
+        lead={lead} 
+        isOpen={isConvertOpen}
+        onClose={() => setIsConvertOpen(false)}
+      />
+    </div>
   );
 }

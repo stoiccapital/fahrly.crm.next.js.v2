@@ -1,3 +1,4 @@
+import { Card } from "@/app/components/shared/ui";
 import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 
 type Props = {
@@ -13,20 +14,20 @@ const formatDate = (date: string) =>
 
 function DetailRow({ label, value }: { label: string; value: string | undefined }) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+    <div>
+      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
         {label}
-      </span>
-      <span className="text-sm text-gray-900">{value || "—"}</span>
+      </p>
+      <p className="text-sm text-slate-700">{value || "—"}</p>
     </div>
   );
 }
 
 export function CustomerDetails({ customer }: Props) {
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
-      <h2 className="mb-3 text-sm font-semibold text-gray-900">Details</h2>
-      <div className="grid gap-4 text-sm md:grid-cols-2">
+    <Card className="p-6">
+      <h2 className="mb-4 text-sm font-semibold text-slate-900">Details</h2>
+      <div className="grid gap-4 text-sm sm:grid-cols-2">
         <DetailRow label="Company Name" value={customer.companyName} />
         {customer.legalCompanyName && (
           <DetailRow label="Legal Name" value={customer.legalCompanyName} />
@@ -53,13 +54,12 @@ export function CustomerDetails({ customer }: Props) {
       </div>
       {customer.summary && (
         <div className="mt-4">
-          <div className="text-xs font-medium uppercase tracking-wide text-gray-500">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
             Summary
-          </div>
-          <p className="mt-1 text-sm text-gray-700">{customer.summary}</p>
+          </p>
+          <p className="text-sm text-slate-700">{customer.summary}</p>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
-

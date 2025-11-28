@@ -2,34 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design tokens for CRM / Fahrly style */
+/* Design tokens for CRM / Fahrly style (Linear-inspired) */
 
 :root {
-  /* Colors */
-  --color-bg-body: 245 245 245; /* gray-100-ish */
+  /* Colors - Neutral palette with subtle accent */
+  --color-bg-body: 248 250 252; /* slate-50 */
   --color-bg-surface: 255 255 255; /* white */
-  --color-border-subtle: 229 231 235; /* gray-200 */
-  --color-border-strong: 17 24 39; /* gray-900 */
-  --color-text-main: 17 24 39; /* gray-900 */
-  --color-text-muted: 107 114 128; /* gray-500 */
-  --color-accent: 37 99 235; /* blue-600 */
-  --color-accent-soft: 59 130 246; /* blue-500 */
-  --color-positive: 5 150 105; /* emerald-600 */
-  --color-negative: 225 29 72; /* rose-600 */
+  --color-border-subtle: 226 232 240; /* slate-200 */
+  --color-border-strong: 15 23 42; /* slate-900 */
+  --color-text-main: 15 23 42; /* slate-900 */
+  --color-text-muted: 100 116 139; /* slate-500 */
+  --color-text-muted-foreground: 100 116 139; /* slate-500 */
+  --color-accent: 99 102 241; /* indigo-500 */
+  --color-accent-soft: 129 140 248; /* indigo-400 */
+  --color-positive: 16 185 129; /* emerald-500 */
+  --color-negative: 239 68 68; /* red-500 */
 
-  /* Radius */
+  /* Radius - Consistent rounded-2xl for cards */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
 
-  /* Shadows */
+  /* Shadows - Subtle Linear-style */
   --shadow-soft: 0 1px 2px 0 rgb(15 23 42 / 0.04),
     0 1px 3px 0 rgb(15 23 42 / 0.08);
-  --shadow-medium: 0 8px 24px rgb(15 23 42 / 0.12);
+  --shadow-medium: 0 4px 12px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 8px 24px rgb(15 23 42 / 0.12);
 
-  /* Spacing scale (for custom utilities if needed) */
+  /* Spacing scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 0.75rem;
@@ -39,22 +41,22 @@
 }
 
 body {
-  @apply bg-gray-100 text-gray-900 antialiased;
+  @apply bg-slate-50 text-slate-900 antialiased;
   background-color: rgb(var(--color-bg-body));
 }
 
 /* Base typography for page titles / subtitles */
 .page-title {
-  @apply text-xl font-semibold text-gray-900;
+  @apply text-2xl md:text-3xl font-semibold tracking-tight text-slate-900;
 }
 
 .page-subtitle {
-  @apply mt-1 text-sm text-gray-500;
+  @apply mt-1 text-sm text-slate-500;
 }
 
-/* Generic utility cards (optional, but used by shared Card) */
+/* Generic utility cards */
 .crm-card {
-  @apply rounded-2xl border border-gray-200 bg-white p-5 shadow-sm;
+  @apply rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm;
 }
 
 .crm-card-header {
@@ -62,10 +64,10 @@ body {
 }
 
 .crm-card-title {
-  @apply text-sm font-semibold text-gray-900;
+  @apply text-sm font-semibold text-slate-900;
 }
 
 .crm-section-label {
-  @apply text-xs font-medium uppercase tracking-wide text-gray-500;
+  @apply text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500;
 }
 

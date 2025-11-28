@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/app/components/shared/ui";
 import { Lead } from "../../_types";
 
 type LeadDetailHeaderProps = {
@@ -9,16 +10,20 @@ type LeadDetailHeaderProps = {
 
 export function LeadDetailHeader({ lead, onConvert }: LeadDetailHeaderProps) {
   return (
-    <div className="flex items-center justify-between">
-      <h1 className="text-xl font-semibold text-gray-900">{lead.companyName}</h1>
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+          {lead.companyName}
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {lead.city ? `${lead.city}, ` : ""}
+          {lead.country}
+        </p>
+      </div>
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={onConvert}
-          className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-        >
+        <Button size="sm" onClick={onConvert}>
           Convert to Account
-        </button>
+        </Button>
       </div>
     </div>
   );

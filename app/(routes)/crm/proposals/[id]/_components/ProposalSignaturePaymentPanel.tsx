@@ -36,19 +36,21 @@ export function ProposalSignaturePaymentPanel({
   const hasLinks = !!docuSealUrl || !!stripePaymentUrl;
 
   return (
-    <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-      <h2 className="mb-3 text-sm font-semibold text-slate-900">
+    <Card className="p-6">
+      <h2 className="mb-4 text-sm font-semibold text-slate-900">
         Signature &amp; Payment
       </h2>
-      <p className="mb-4 text-xs text-slate-600">
+      <p className="mb-4 text-xs text-slate-500">
         Generate a DocuSeal contract link for signature and a Stripe payment link
         directly from this proposal. In a later step, these actions will call your
         backend API that talks to DocuSeal and Stripe.
       </p>
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-700">DocuSeal link</span>
+      <div className="space-y-4">
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              DocuSeal link
+            </label>
             <Button
               size="sm"
               variant="secondary"
@@ -76,9 +78,11 @@ export function ProposalSignaturePaymentPanel({
             </Button>
           </div>
         </div>
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-700">Stripe payment link</span>
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Stripe payment link
+            </label>
             <Button
               size="sm"
               variant="secondary"
@@ -108,7 +112,7 @@ export function ProposalSignaturePaymentPanel({
         </div>
       </div>
       {!hasLinks && (
-        <p className="mt-3 text-[11px] text-slate-500">
+        <p className="mt-4 text-[11px] text-slate-500">
           Hint: in production, these buttons will call your backend (e.g.{" "}
           <code className="rounded bg-slate-50 px-1 py-0.5 text-[10px]">
             POST /api/contracts/generate
@@ -123,4 +127,3 @@ export function ProposalSignaturePaymentPanel({
     </Card>
   );
 }
-

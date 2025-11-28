@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
+import { Card, CardHeader, CardTitle, Input, Select, Textarea, Button, Badge } from "@/app/components/shared/ui";
 import { useCRMStore, type Opportunity, type CRMNote, type Task } from "@/store/crmStore";
 
 type OpportunityDetailClientProps = {
@@ -20,6 +22,8 @@ const STAGES: Opportunity["stage"][] = [
 const RISK_LEVELS: Opportunity["riskLevel"][] = ["Low", "Medium", "High"];
 
 export default function OpportunityDetailClient({ id }: OpportunityDetailClientProps) {
+  const router = useRouter();
+  
   // Use separate selectors to avoid creating new objects on every render
   const opportunities = useCRMStore(
     (state) => (state.opportunities || []) as Opportunity[]
@@ -42,14 +46,20 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
 
   if (!opportunity) {
     return (
-      <div className="p-6">
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-          <h1 className="text-xl font-semibold">Opportunity not found</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            We couldn&apos;t find an opportunity with ID{" "}
-            <span className="font-mono">{id}</span>.
+      <div className="max-w-7xl mx-auto">
+        <Card className="p-6">
+          <p className="text-sm text-slate-500">
+            Opportunity not found. It may have been deleted or moved.
           </p>
-        </div>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => router.push("/crm/opportunities")}
+            className="mt-3"
+          >
+            Back to opportunities
+          </Button>
+        </Card>
       </div>
     );
   }
@@ -207,319 +217,315 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
   const bfLabel =
     opportunity.billingFrequency === "Monthly" ? "monatlich" : "jährlich";
 
+  function getStageVariant(stage: string) {
+    const s = stage.toLowerCase();
+    if (s === "won" || s === "closed won") return "success";
+    if (s === "lost" || s === "closed lost") return "danger";
+    if (s === "proposal" || s === "closing") return "warning";
+    return "default";
+  }
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">{opportunity.name}</h1>
-            {relatedAccount && (
-              <p className="mt-1 text-sm text-gray-500">
-                {relatedAccount.name}
-              </p>
-            )}
-            <p className="mt-2 text-sm text-gray-700">
-              {amountLabel} · {termLabel} · {bfLabel}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+            {opportunity.name}
+          </h1>
+          {relatedAccount && (
+            <p className="mt-1 text-sm text-slate-500">
+              {relatedAccount.name || relatedAccount.companyName || relatedAccount.legalCompanyName}
             </p>
-          </div>
-          <div className="flex flex-col items-start gap-3 text-sm sm:items-end">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-800">
-                {opportunity.stage}
-              </span>
-              <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-700">
-                {opportunity.probability}% win prob
-              </span>
-            </div>
-            <div className="text-xs text-gray-500">
-              Source: {opportunity.source} · Segment: {opportunity.segment}
-            </div>
-            <div className="text-xs text-gray-400">
-              Owner: {opportunity.ownerId} · Close: {opportunity.closeDate}
-            </div>
-            <div className="flex gap-2">
-              {isEditing ? (
-                <>
-                  <button
-                    type="button"
-                    className="rounded-full border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
-                    onClick={handleCancel}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-black disabled:opacity-40"
-                    onClick={handleSave}
-                    disabled={!amountValid}
-                  >
-                    Save
-                  </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  className="rounded-full border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-          </div>
+          )}
+          <p className="mt-1 text-sm text-slate-500">
+            {amountLabel} · {termLabel} · {bfLabel}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant={getStageVariant(opportunity.stage) as any}>
+            {opportunity.stage}
+          </Badge>
+          <Badge variant="soft">
+            {opportunity.probability}% win prob
+          </Badge>
+          {isEditing ? (
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleSave}
+                disabled={!amountValid}
+              >
+                Save
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Top row: Deal overview + People & execution */}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1.5fr)]">
-        {/* Deal overview (with editable stage/amount/closeDate) */}
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold">Deal overview</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Contract shape and commercial details.
-          </p>
-          <div className="mt-4 grid gap-4 text-sm text-gray-700 sm:grid-cols-2">
+      {/* Main content grid */}
+      <div className="grid gap-6 lg:grid-cols-[2fr,1.5fr] lg:items-start">
+        {/* Deal overview */}
+        <Card className="p-6">
+          <CardHeader className="mb-4">
+            <CardTitle>Deal overview</CardTitle>
+            <p className="mt-1 text-xs text-slate-500">
+              Contract shape and commercial details.
+            </p>
+          </CardHeader>
+          <div className="grid gap-4 text-sm sm:grid-cols-2">
             {/* Stage */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Stage
-              </div>
-              <div className="mt-1">
-                {isEditing ? (
-                  <select
-                    className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                    value={editStage}
-                    onChange={(e) => setEditStage(e.target.value as Opportunity["stage"])}
-                  >
-                    {STAGES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  opportunity.stage
-                )}
-              </div>
+              </p>
+              {isEditing ? (
+                <Select
+                  value={editStage}
+                  onChange={(e) => setEditStage(e.target.value as Opportunity["stage"])}
+                >
+                  {STAGES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </Select>
+              ) : (
+                <p className="text-sm text-slate-700">{opportunity.stage}</p>
+              )}
             </div>
 
             {/* Amount */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Amount
-              </div>
-              <div className="mt-1">
-                {isEditing ? (
-                  <>
-                    <input
-                      type="number"
-                      className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      value={editAmount}
-                      onChange={(e) => setEditAmount(e.target.value)}
-                    />
-                    {!amountValid && (
-                      <div className="mt-1 text-xs text-red-500">
-                        Please enter a valid amount.
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  `${amountLabel} (${opportunity.currency})`
-                )}
-              </div>
+              </p>
+              {isEditing ? (
+                <>
+                  <Input
+                    type="number"
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
+                  />
+                  {!amountValid && (
+                    <div className="mt-1 text-xs text-red-500">
+                      Please enter a valid amount.
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-slate-700">
+                  {amountLabel} ({opportunity.currency})
+                </p>
+              )}
             </div>
 
             {/* Close date */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Close date
-              </div>
-              <div className="mt-1">
-                {isEditing ? (
-                  <input
-                    type="date"
-                    className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                    value={editCloseDate}
-                    onChange={(e) => setEditCloseDate(e.target.value)}
-                  />
-                ) : (
-                  opportunity.closeDate || "—"
-                )}
-              </div>
+              </p>
+              {isEditing ? (
+                <Input
+                  type="date"
+                  value={editCloseDate}
+                  onChange={(e) => setEditCloseDate(e.target.value)}
+                />
+              ) : (
+                <p className="text-sm text-slate-700">
+                  {opportunity.closeDate || "—"}
+                </p>
+              )}
             </div>
 
             {/* Term (read-only) */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Term
-              </div>
-              <div className="mt-1">
+              </p>
+              <p className="text-sm text-slate-700">
                 {opportunity.termMonths} months · {opportunity.billingFrequency}
-              </div>
+              </p>
             </div>
 
             {/* Discount */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Discount
-              </div>
-              <div className="mt-1">
+              </p>
+              <p className="text-sm text-slate-700">
                 {typeof opportunity.discountPercent === "number"
                   ? `${opportunity.discountPercent}%`
                   : "—"}
-              </div>
+              </p>
             </div>
 
             {/* Vehicles */}
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Vehicles
-              </div>
-              <div className="mt-1">
+              </p>
+              <p className="text-sm text-slate-700">
                 {typeof opportunity.vehicles === "number"
                   ? `${opportunity.vehicles} Fahrzeuge`
                   : "—"}
-              </div>
+              </p>
             </div>
 
             {/* Modules */}
             <div className="sm:col-span-2">
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Modules
-              </div>
-              <div className="mt-1">
+              </p>
+              <p className="text-sm text-slate-700">
                 {opportunity.modules && opportunity.modules.length > 0
                   ? opportunity.modules.join(", ")
                   : "—"}
-              </div>
+              </p>
             </div>
           </div>
-        </div>
+        </Card>
 
-        {/* People & execution (with editable nextStep, nextStepDueDate, riskLevel) */}
-        <div className="space-y-4">
+        {/* People & execution */}
+        <div className="space-y-6">
           {/* People */}
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold">People</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Who is on the customer side for this deal.
-            </p>
-            <div className="mt-4 text-sm text-gray-700">
-              <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+          <Card className="p-6">
+            <CardHeader className="mb-4">
+              <CardTitle>People</CardTitle>
+              <p className="mt-1 text-xs text-slate-500">
+                Who is on the customer side for this deal.
+              </p>
+            </CardHeader>
+            <div className="text-sm">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Primary contact
-              </div>
+              </p>
               <div className="mt-1">
                 {primaryContact ? (
                   <div className="space-y-1">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-slate-900">
                       {primaryContact.name}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-slate-500">
                       {primaryContact.role || primaryContact.title || ""}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-slate-500">
                       {primaryContact.email || ""}
                     </div>
                   </div>
                 ) : opportunity.primaryContactId ? (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-slate-500">
                     Linked contact ID:{" "}
                     <span className="font-mono">
                       {opportunity.primaryContactId}
                     </span>
                   </span>
                 ) : (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-slate-500">
                     No primary contact linked.
                   </span>
                 )}
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Execution */}
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold">Execution</h2>
-            <p className="mt-1 text-sm text-gray-500">
-              What needs to happen next to win.
-            </p>
-            <div className="mt-4 grid gap-4 text-sm text-gray-700">
+          <Card className="p-6">
+            <CardHeader className="mb-4">
+              <CardTitle>Execution</CardTitle>
+              <p className="mt-1 text-xs text-slate-500">
+                What needs to happen next to win.
+              </p>
+            </CardHeader>
+            <div className="grid gap-4 text-sm">
               {/* Next step */}
               <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                   Next step
-                </div>
-                <div className="mt-1">
-                  {isEditing ? (
-                    <textarea
-                      className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      rows={2}
-                      value={editNextStep}
-                      onChange={(e) => setEditNextStep(e.target.value)}
-                      placeholder="e.g. Send proposal v2, schedule trial kickoff"
-                    />
-                  ) : (
-                    opportunity.nextStep || "—"
-                  )}
-                </div>
+                </p>
+                {isEditing ? (
+                  <Textarea
+                    rows={2}
+                    value={editNextStep}
+                    onChange={(e) => setEditNextStep(e.target.value)}
+                    placeholder="e.g. Send proposal v2, schedule trial kickoff"
+                  />
+                ) : (
+                  <p className="text-sm text-slate-700">
+                    {opportunity.nextStep || "—"}
+                  </p>
+                )}
               </div>
 
               {/* Next step due */}
               <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                   Next step due
-                </div>
-                <div className="mt-1">
-                  {isEditing ? (
-                    <input
-                      type="date"
-                      className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      value={editNextStepDueDate}
-                      onChange={(e) => setEditNextStepDueDate(e.target.value)}
-                    />
-                  ) : opportunity.nextStepDueDate ? (
-                    formatDate(opportunity.nextStepDueDate)
-                  ) : (
-                    "—"
-                  )}
-                </div>
+                </p>
+                {isEditing ? (
+                  <Input
+                    type="date"
+                    value={editNextStepDueDate}
+                    onChange={(e) => setEditNextStepDueDate(e.target.value)}
+                  />
+                ) : (
+                  <p className="text-sm text-slate-700">
+                    {opportunity.nextStepDueDate ? formatDate(opportunity.nextStepDueDate) : "—"}
+                  </p>
+                )}
               </div>
 
               {/* Risk level */}
               <div>
-                <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                   Risk level
-                </div>
-                <div className="mt-1">
-                  {isEditing ? (
-                    <select
-                      className="w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                      value={editRiskLevel}
-                      onChange={(e) =>
-                        setEditRiskLevel(
-                          (e.target.value || "") as Opportunity["riskLevel"] | ""
-                        )
-                      }
-                    >
-                      <option value="">—</option>
-                      {RISK_LEVELS.map((rl) => (
-                        <option key={rl} value={rl || ""}>
-                          {rl}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    opportunity.riskLevel || "—"
-                  )}
-                </div>
+                </p>
+                {isEditing ? (
+                  <Select
+                    value={editRiskLevel}
+                    onChange={(e) =>
+                      setEditRiskLevel(
+                        (e.target.value || "") as Opportunity["riskLevel"] | ""
+                      )
+                    }
+                  >
+                    <option value="">—</option>
+                    {RISK_LEVELS.map((rl) => (
+                      <option key={rl} value={rl || ""}>
+                        {rl}
+                      </option>
+                    ))}
+                  </Select>
+                ) : (
+                  <p className="text-sm text-slate-700">
+                    {opportunity.riskLevel || "—"}
+                  </p>
+                )}
               </div>
             </div>
             {(opportunity.reasonWon || opportunity.reasonLost) && (
-              <div className="mt-4 text-sm text-gray-700">
-                <div className="text-xs font-medium uppercase tracking-wide text-gray-400">
+              <div className="mt-4 text-sm">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                   Outcome notes
-                </div>
+                </p>
                 <div className="mt-1 space-y-1">
                   {opportunity.reasonWon && (
                     <div>
@@ -536,53 +542,49 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         </div>
       </div>
 
-      {/* Proposals panel (read-only) */}
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
+      {/* Proposals panel */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold">Proposals</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-sm font-semibold text-slate-900">Proposals</h2>
+            <p className="mt-1 text-xs text-slate-500">
               Documents and offers linked to this opportunity.
             </p>
           </div>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-slate-400">
             {relatedProposals.length} proposal
             {relatedProposals.length === 1 ? "" : "s"}
           </span>
         </div>
 
         {relatedProposals.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             No proposals linked to this opportunity yet.
           </p>
         ) : (
-          <ul className="mt-4 divide-y text-sm">
+          <ul className="space-y-3">
             {relatedProposals.map((proposal: any) => (
-              <li key={proposal.id} className="py-3">
+              <li key={proposal.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-slate-900">
                       {proposal.title || proposal.name || proposal.id}
                     </div>
-                    <div className="mt-1 text-xs text-gray-500">
+                    <div className="mt-1 text-xs text-slate-500">
                       Created:{" "}
                       {formatDate(proposal.createdAt || proposal.created)}
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1 text-xs">
+                  <div className="flex flex-col items-end gap-1">
                     {proposal.status && (
-                      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
-                        {proposal.status}
-                      </span>
+                      <Badge variant="soft">{proposal.status}</Badge>
                     )}
                     {proposal.version && (
-                      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
-                        v{proposal.version}
-                      </span>
+                      <Badge variant="soft">v{proposal.version}</Badge>
                     )}
                   </div>
                 </div>
@@ -590,76 +592,74 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
             ))}
           </ul>
         )}
-      </div>
+      </Card>
 
       {/* Tasks panel */}
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold">Tasks</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-sm font-semibold text-slate-900">Tasks</h2>
+            <p className="mt-1 text-xs text-slate-500">
               Open tasks related to this opportunity.
             </p>
           </div>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-slate-400">
             {relatedTasks.length} task
             {relatedTasks.length === 1 ? "" : "s"}
           </span>
         </div>
 
         {/* Add task toggle + form */}
-        <div className="mt-4 flex justify-end">
+        <div className="mb-4 flex justify-end">
           {isAddingTask ? (
-            <button
+            <Button
               type="button"
-              className="rounded-xl border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+              variant="secondary"
+              size="sm"
               onClick={() => setIsAddingTask(false)}
             >
               Cancel
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
-              className="rounded-xl bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-black"
+              size="sm"
               onClick={() => setIsAddingTask(true)}
             >
               Add task
-            </button>
+            </Button>
           )}
         </div>
 
         {isAddingTask && (
-          <div className="mt-3 rounded-xl border bg-gray-50 p-4 text-sm space-y-3">
+          <Card className="mb-4 border-slate-200 bg-slate-50 p-4">
             <div className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
                   Title
                 </label>
-                <input
+                <Input
                   type="text"
-                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   placeholder="e.g. Send proposal v2"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
                   Due date
                 </label>
-                <input
+                <Input
                   type="date"
-                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                   value={newTaskDueDate}
                   onChange={(e) => setNewTaskDueDate(e.target.value)}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
                   Priority
                 </label>
-                <select
-                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                <Select
                   value={newTaskPriority}
                   onChange={(e) =>
                     setNewTaskPriority(e.target.value as "Low" | "Medium" | "High")
@@ -668,44 +668,45 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
                   <option value="High">High</option>
-                </select>
+                </Select>
               </div>
             </div>
-            <div className="flex justify-end gap-2">
-              <button
+            <div className="mt-3 flex justify-end gap-2">
+              <Button
                 type="button"
-                className="rounded-xl border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsAddingTask(false)}
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="rounded-xl bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-black disabled:opacity-40"
+                size="sm"
                 onClick={handleAddTask}
                 disabled={!newTaskTitle.trim()}
               >
                 Save task
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Tasks list with inline editing */}
         {relatedTasks.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             No tasks linked to this opportunity.
           </p>
         ) : (
-          <ul className="mt-4 divide-y text-sm">
+          <ul className="space-y-3">
             {relatedTasks.map((task) => (
-              <li key={task.id} className="py-3">
+              <li key={task.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-slate-900">
                       {task.title}
                     </div>
-                    <div className="mt-1 text-xs text-gray-500">
+                    <div className="mt-1 text-xs text-slate-500">
                       Due:{" "}
                       {task.dueDate ? formatDate(task.dueDate) : "—"} ·{" "}
                       {task.status}
@@ -713,8 +714,8 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     {/* Status inline edit */}
-                    <select
-                      className="rounded-full border px-2 py-1 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    <Select
+                      className="text-xs"
                       value={task.status}
                       onChange={(e) =>
                         updateTask(task.id, {
@@ -725,12 +726,12 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                       <option value="Open">Open</option>
                       <option value="In Progress">In Progress</option>
                       <option value="Done">Done</option>
-                    </select>
+                    </Select>
 
                     {/* Due date inline edit */}
-                    <input
+                    <Input
                       type="date"
-                      className="rounded-full border px-2 py-1 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      className="text-xs"
                       value={task.dueDate || ""}
                       onChange={(e) =>
                         updateTask(task.id, {
@@ -740,9 +741,9 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                     />
 
                     {task.priority && (
-                      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
+                      <Badge variant="soft" className="text-xs">
                         Priority: {task.priority}
-                      </span>
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -750,53 +751,53 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
             ))}
           </ul>
         )}
-      </div>
+      </Card>
 
       {/* Notes panel */}
-      <div className="rounded-2xl border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-semibold">Notes</h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <h2 className="text-sm font-semibold text-slate-900">Notes</h2>
+            <p className="mt-1 text-xs text-slate-500">
               Structured notes for calls, emails, meetings and internal comments.
             </p>
           </div>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-slate-400">
             {relatedNotes.length} note
             {relatedNotes.length === 1 ? "" : "s"}
           </span>
         </div>
 
         {/* Add note toggle + form */}
-        <div className="mt-4 flex justify-end">
+        <div className="mb-4 flex justify-end">
           {isAddingNote ? (
-            <button
+            <Button
               type="button"
-              className="rounded-xl border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+              variant="secondary"
+              size="sm"
               onClick={() => setIsAddingNote(false)}
             >
               Cancel
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
-              className="rounded-xl bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-black"
+              size="sm"
               onClick={() => setIsAddingNote(true)}
             >
               Add note
-            </button>
+            </Button>
           )}
         </div>
 
         {isAddingNote && (
-          <div className="mt-3 rounded-xl border bg-gray-50 p-4 text-sm space-y-3">
+          <Card className="mb-4 border-slate-200 bg-slate-50 p-4">
             <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
                   Type
                 </label>
-                <select
-                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                <Select
                   value={newNoteType}
                   onChange={(e) =>
                     setNewNoteType(e.target.value as CRMNote["type"])
@@ -806,14 +807,13 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                   <option value="Email">Email</option>
                   <option value="Meeting">Meeting</option>
                   <option value="Internal">Internal</option>
-                </select>
+                </Select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700">
+                <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
                   Note
                 </label>
-                <textarea
-                  className="mt-1 w-full rounded-xl border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                <Textarea
                   rows={3}
                   value={newNoteBody}
                   onChange={(e) => setNewNoteBody(e.target.value)}
@@ -821,58 +821,57 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-2">
-              <button
+            <div className="mt-3 flex justify-end gap-2">
+              <Button
                 type="button"
-                className="rounded-xl border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100"
+                variant="secondary"
+                size="sm"
                 onClick={() => setIsAddingNote(false)}
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="rounded-xl bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-black disabled:opacity-40"
+                size="sm"
                 onClick={handleAddNote}
                 disabled={!newNoteBody.trim()}
               >
                 Save note
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Notes list */}
         {relatedNotes.length === 0 ? (
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="text-sm text-slate-500">
             No notes for this opportunity yet.
           </p>
         ) : (
-          <ul className="mt-4 divide-y text-sm">
+          <ul className="space-y-3">
             {relatedNotes
               .slice() // copy to avoid mutating
               .sort((a: CRMNote, b: CRMNote) =>
                 (b.createdAt || "").localeCompare(a.createdAt || "")
               )
               .map((note: any) => (
-                <li key={note.id} className="py-3">
+                <li key={note.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-gray-700">
-                          {note.type || "Note"}
-                        </span>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                        <Badge variant="soft">{note.type || "Note"}</Badge>
                         <span>
                           {note.createdAt
                             ? formatDate(note.createdAt)
                             : ""}
                         </span>
                         {note.authorId && (
-                          <span className="text-gray-400">
+                          <span className="text-slate-400">
                             · {note.authorId}
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 whitespace-pre-line text-sm text-gray-800">
+                      <p className="whitespace-pre-line text-sm text-slate-800">
                         {note.body || note.text}
                       </p>
                     </div>
@@ -881,7 +880,7 @@ export default function OpportunityDetailClient({ id }: OpportunityDetailClientP
               ))}
           </ul>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

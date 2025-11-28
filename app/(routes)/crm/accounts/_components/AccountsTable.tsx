@@ -8,6 +8,7 @@ import {
   DataTable,
   type DataTableColumn,
   Button,
+  Badge,
 } from "@/app/components/shared/ui";
 
 import { useCRMStore } from "@/store/crmStore";
@@ -19,7 +20,16 @@ type AccountRow = {
   legalCompanyName?: string;
   city?: string;
   country?: string;
+  status?: string;
 };
+
+function getStatusVariant(status?: string) {
+  if (!status) return "default";
+  const s = status.toLowerCase();
+  if (s === "customer") return "success";
+  if (s === "churned") return "danger";
+  return "default";
+}
 
 export function AccountsTable() {
   const router = useRouter();
@@ -36,7 +46,7 @@ export function AccountsTable() {
         cell: (row) => (
           <div className="flex flex-col">
             <span className="text-sm font-medium text-slate-900">
-              {row.name || row.companyName || row.legalCompanyName}
+              {row.name || row.companyName || row.legalCompanyName || "Unnamed account"}
             </span>
             {row.legalCompanyName &&
               row.companyName !== row.legalCompanyName && (
@@ -63,28 +73,41 @@ export function AccountsTable() {
       {
         id: "status",
         header: "Status",
-        cell: (row) => (
-          <span className="text-xs text-slate-500">
-            {(row as any).status || "—"}
-          </span>
-        ),
+        cell: (row) =>
+          row.status ? (
+            <Badge variant={getStatusVariant(row.status) as any}>
+              {row.status}
+            </Badge>
+          ) : (
+            <span className="text-slate-400">—</span>
+          ),
       },
     ],
     []
   );
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+            Accounts
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Companies you do business with.
+          </p>
+        </div>
+        <Button size="sm">New account</Button>
+      </div>
+
+      {/* Table */}
       <DataTable<AccountRow>
-        title="Accounts"
-        subtitle="Companies you do business with"
         data={accounts}
         columns={columns}
         emptyMessage="No accounts yet."
         onRowClick={(row) => router.push(`/crm/accounts/${row.id}`)}
-        toolbar={<Button size="sm">New account</Button>}
       />
     </div>
   );
 }
-

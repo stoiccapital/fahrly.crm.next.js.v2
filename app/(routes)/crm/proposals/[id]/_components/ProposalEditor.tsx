@@ -62,12 +62,14 @@ export function ProposalEditor({ proposal, onChange }: Props) {
     };
 
   return (
-    <div className="space-y-4">
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Proposal Details</h2>
-        <div className="grid gap-3 md:grid-cols-2">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Title</label>
+    <div className="space-y-6">
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">Proposal Details</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Title
+            </label>
             <Input
               value={proposal.title}
               onChange={handleInputChange("title")}
@@ -75,8 +77,10 @@ export function ProposalEditor({ proposal, onChange }: Props) {
             />
           </div>
           <div className="grid grid-cols-[1.3fr_0.7fr] gap-2">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">Amount</label>
+            <div>
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+                Amount
+              </label>
               <Input
                 type="number"
                 min={0}
@@ -84,8 +88,10 @@ export function ProposalEditor({ proposal, onChange }: Props) {
                 onChange={handleInputChange("amount")}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-700">Currency</label>
+            <div>
+              <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+                Currency
+              </label>
               <Select
                 value={proposal.currency}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
@@ -100,24 +106,28 @@ export function ProposalEditor({ proposal, onChange }: Props) {
               </Select>
             </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Start date</label>
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Start date
+            </label>
             <Input
               type="date"
               value={proposal.startDate?.slice(0, 10) ?? ""}
               onChange={handleInputChange("startDate")}
             />
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">End date</label>
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              End date
+            </label>
             <Input
               type="date"
               value={proposal.endDate?.slice(0, 10) ?? ""}
               onChange={handleInputChange("endDate")}
             />
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Term length (months)
             </label>
             <Input
@@ -130,11 +140,13 @@ export function ProposalEditor({ proposal, onChange }: Props) {
         </div>
       </Card>
 
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Pricing &amp; Scope</h2>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Scope of work</label>
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">Pricing &amp; Scope</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Scope of work
+            </label>
             <Textarea
               rows={4}
               value={proposal.scopeOfWork}
@@ -142,8 +154,10 @@ export function ProposalEditor({ proposal, onChange }: Props) {
               placeholder="Describe the modules, services, and scope included in this proposal."
             />
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Pricing details</label>
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Pricing details
+            </label>
             <Textarea
               rows={4}
               value={proposal.pricingDetails}
@@ -156,11 +170,13 @@ export function ProposalEditor({ proposal, onChange }: Props) {
         </div>
       </Card>
 
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Commercial Terms</h2>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Payment terms</label>
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">Commercial Terms</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Payment terms
+            </label>
             <Textarea
               rows={3}
               value={proposal.paymentTerms}
@@ -168,8 +184,10 @@ export function ProposalEditor({ proposal, onChange }: Props) {
               placeholder="Net 30 days from invoice date. Invoices issued annually in advance."
             />
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-slate-700">Notes</label>
+          <div>
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
+              Notes
+            </label>
             <Textarea
               rows={3}
               value={proposal.notes}

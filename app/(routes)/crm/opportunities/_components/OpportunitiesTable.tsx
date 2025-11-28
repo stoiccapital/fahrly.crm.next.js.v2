@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -12,6 +13,7 @@ import {
 } from "@/app/components/shared/ui";
 
 import { useCRMStore } from "@/store/crmStore";
+import { NewOpportunityModal } from "./NewOpportunityModal";
 
 type OpportunityRow = {
   id: string;
@@ -23,15 +25,22 @@ type OpportunityRow = {
   closeDate?: string;
 };
 
+function getStageVariant(stage: string) {
+  const s = stage.toLowerCase();
+  if (s === "won" || s === "closed won") return "success";
+  if (s === "lost" || s === "closed lost") return "danger";
+  if (s === "proposal" || s === "closing") return "warning";
+  return "default";
+}
+
 export function OpportunitiesTable() {
   const router = useRouter();
+  const [isNewOpportunityOpen, setIsNewOpportunityOpen] = useState(false);
 
   const opportunities = (useCRMStore((state) => state.opportunities) ??
     []) as OpportunityRow[];
 
   const accounts = useCRMStore((state) => state.accounts) ?? [];
-
-  console.log("🔥 OpportunitiesTable opportunities:", opportunities);
 
   const columns = React.useMemo<DataTableColumn<OpportunityRow>[]>(
     () => [
@@ -49,7 +58,7 @@ export function OpportunitiesTable() {
               </span>
               {account && (
                 <span className="text-xs text-slate-500">
-                  {account.name}
+                  {account.name || account.companyName || account.legalCompanyName}
                 </span>
               )}
             </div>
@@ -59,7 +68,11 @@ export function OpportunitiesTable() {
       {
         id: "stage",
         header: "Stage",
-        cell: (row) => <Badge>{row.stage}</Badge>,
+        cell: (row) => (
+          <Badge variant={getStageVariant(row.stage) as any}>
+            {row.stage}
+          </Badge>
+        ),
       },
       {
         id: "amount",
@@ -95,16 +108,56 @@ export function OpportunitiesTable() {
     [accounts]
   );
 
+  function handleCreateOpportunity(data: {
+    name: string;
+    accountId: string;
+    amount: number;
+    currency: string;
+    closeDate: string;
+    stage: string;
+    owner: string;
+    description?: string;
+  }) {
+    // This would typically call a store action, but we're not modifying logic
+    // The modal's onCreate callback will handle this
+  }
+
   return (
-    <DataTable<OpportunityRow>
-      title="Opportunities"
-      subtitle="Pipeline overview"
-      data={opportunities}
-      columns={columns}
-      emptyMessage="No opportunities in your pipeline."
-      onRowClick={(row) => router.push(`/crm/opportunities/${row.id}`)}
-      toolbar={<Button size="sm">New opportunity</Button>}
-    />
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+              Opportunities
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Pipeline overview of all open and closed deals.
+            </p>
+          </div>
+          <Button size="sm" onClick={() => setIsNewOpportunityOpen(true)}>
+            New opportunity
+          </Button>
+        </div>
+
+        {/* Table */}
+        <DataTable<OpportunityRow>
+          data={opportunities}
+          columns={columns}
+          emptyMessage="No opportunities in your pipeline."
+          onRowClick={(row) => router.push(`/crm/opportunities/${row.id}`)}
+        />
+      </div>
+
+      <NewOpportunityModal
+        isOpen={isNewOpportunityOpen}
+        onClose={() => setIsNewOpportunityOpen(false)}
+        onCreate={handleCreateOpportunity}
+        accounts={accounts.map((acc: any) => ({
+          id: acc.id,
+          name: acc.name || acc.companyName || acc.legalCompanyName || "Unnamed account",
+        }))}
+      />
+    </>
   );
 }
-

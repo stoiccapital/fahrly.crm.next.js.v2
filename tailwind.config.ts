@@ -6,7 +6,14 @@ const config: Config = {
     "./app/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        muted: {
+          DEFAULT: "rgb(100 116 139)", // slate-500
+          foreground: "rgb(100 116 139)", // slate-500
+        },
+      },
+    },
   },
   plugins: [],
 };

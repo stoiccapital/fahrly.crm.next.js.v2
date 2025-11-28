@@ -1,3 +1,4 @@
+import { Badge } from "@/app/components/shared/ui";
 import type { CustomerType } from "@/app/(routes)/crm/customers/_types";
 
 type Props = {
@@ -5,29 +6,33 @@ type Props = {
 };
 
 export function CustomerHeader({ customer }: Props) {
+  const sinceLabel = customer.customerSince
+    ? new Date(customer.customerSince).toLocaleDateString("de-DE")
+    : null;
+
   return (
-    <div className="flex flex-col justify-between gap-4 rounded-2xl border bg-white p-5 shadow-sm md:flex-row md:items-center">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
           {customer.companyName}
         </h1>
         {customer.legalCompanyName && customer.legalCompanyName !== customer.companyName && (
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-slate-500">
             {customer.legalCompanyName}
           </p>
         )}
+        {sinceLabel && (
+          <p className="mt-1 text-sm text-slate-500">
+            Customer since {sinceLabel}
+          </p>
+        )}
       </div>
-      <div className="flex items-center gap-2">
-        <span className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2.5 py-0.5 text-xs font-medium text-green-700">
-          Customer
-        </span>
-        {customer.customerSince && (
-          <span className="text-xs text-gray-500">
-            Since {new Date(customer.customerSince).toLocaleDateString()}
-          </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="success">Customer</Badge>
+        {customer.status && (
+          <Badge variant="default">{customer.status}</Badge>
         )}
       </div>
     </div>
   );
 }
-

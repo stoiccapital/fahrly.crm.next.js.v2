@@ -1,18 +1,14 @@
 "use client";
 
 import * as React from "react";
-
-import Link from "next/link";
-
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import {
   DataTable,
   type DataTableColumn,
   Button,
   Badge,
 } from "@/app/components/shared/ui";
-
 import { useCRMStore } from "@/store/crmStore";
 
 type CustomerRow = {
@@ -25,15 +21,21 @@ type CustomerRow = {
   since?: string;
 };
 
+function getStatusVariant(status: string) {
+  const s = status.toLowerCase();
+  if (s === "active") return "success";
+  if (s === "churned" || s === "cancelled") return "danger";
+  return "default";
+}
+
 export function CustomersTable() {
   const router = useRouter();
+  const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
 
   const customers = (useCRMStore((state) => state.customers) ??
     []) as CustomerRow[];
 
   const accounts = useCRMStore((state) => state.accounts) ?? [];
-
-  console.log("🔥 CustomersTable customers:", customers);
 
   const columns = React.useMemo<DataTableColumn<CustomerRow>[]>(
     () => [
@@ -46,15 +48,12 @@ export function CustomersTable() {
           );
           return (
             <div className="flex flex-col">
-              <Link
-                href={`/crm/customers/${row.id}`}
-                className="text-sm font-medium text-gray-900 underline underline-offset-2"
-              >
+              <span className="text-sm font-medium text-slate-900">
                 {row.name}
-              </Link>
+              </span>
               {account && (
                 <span className="text-xs text-slate-500">
-                  {account.name}
+                  {account.name || account.companyName || account.legalCompanyName}
                 </span>
               )}
             </div>
@@ -66,7 +65,9 @@ export function CustomersTable() {
         header: "Status",
         cell: (row) =>
           row.status ? (
-            <Badge>{row.status}</Badge>
+            <Badge variant={getStatusVariant(row.status) as any}>
+              {row.status}
+            </Badge>
           ) : (
             <span className="text-slate-400">—</span>
           ),
@@ -109,14 +110,29 @@ export function CustomersTable() {
   );
 
   return (
-    <DataTable<CustomerRow>
-      title="Customers"
-      subtitle="Active paying customers"
-      data={customers}
-      columns={columns}
-      emptyMessage="No customers yet."
-      onRowClick={(row) => router.push(`/crm/customers/${row.id}`)}
-      toolbar={<Button size="sm">New customer</Button>}
-    />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
+            Customers
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Active customers and key accounts.
+          </p>
+        </div>
+        <Button size="sm" onClick={() => setIsNewCustomerOpen(true)} disabled>
+          New customer
+        </Button>
+      </div>
+
+      {/* Table */}
+      <DataTable<CustomerRow>
+        data={customers}
+        columns={columns}
+        emptyMessage="No customers yet."
+        onRowClick={(row) => router.push(`/crm/customers/${row.id}`)}
+      />
+    </div>
   );
 }

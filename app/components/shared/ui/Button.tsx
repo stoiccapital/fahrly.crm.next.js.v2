@@ -14,13 +14,13 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-slate-900 text-white hover:bg-slate-800 focus-visible:ring-slate-900",
+    "bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.98] focus-visible:ring-slate-900",
   secondary:
-    "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 focus-visible:ring-slate-400",
+    "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-slate-200 active:scale-[0.98] focus-visible:ring-slate-400",
   ghost:
-    "bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:ring-slate-400",
+    "bg-transparent text-slate-700 hover:bg-slate-100 active:scale-[0.98] focus-visible:ring-slate-400",
   danger:
-    "bg-red-600 text-white hover:bg-red-500 focus-visible:ring-red-600",
+    "bg-red-600 text-white hover:bg-red-500 active:scale-[0.98] focus-visible:ring-red-600",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -42,7 +42,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition",
+        "inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition-all duration-200 ease-out",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         variantClasses[variant],

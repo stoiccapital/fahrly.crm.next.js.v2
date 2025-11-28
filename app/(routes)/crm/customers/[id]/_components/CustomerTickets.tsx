@@ -6,13 +6,33 @@ import { useCRMStore } from "@/store/crmStore";
 
 import type { Ticket, TicketPriority } from "@/app/(routes)/crm/tickets/_types";
 
-import { Button, Modal, Input, Textarea } from "@/app/components/shared/ui";
+import { Card, Button, Modal, Input, Textarea, Select, Badge } from "@/app/components/shared/ui";
 
 type CustomerTicketsProps = {
   customerId: string;
 };
 
 const PRIORITIES: TicketPriority[] = ["low", "medium", "high", "critical"];
+
+function getPriorityVariant(priority: TicketPriority) {
+  switch (priority) {
+    case "critical":
+      return "danger";
+    case "high":
+      return "warning";
+    case "medium":
+      return "default";
+    default:
+      return "soft";
+  }
+}
+
+function getStatusVariant(status: string) {
+  const s = status.toLowerCase();
+  if (s === "closed" || s === "resolved") return "success";
+  if (s === "open" || s === "new") return "warning";
+  return "default";
+}
 
 export function CustomerTickets({ customerId }: CustomerTicketsProps) {
   const { accounts, tickets, addTicket } = useCRMStore() as any;
@@ -59,59 +79,78 @@ export function CustomerTickets({ customerId }: CustomerTicketsProps) {
   };
 
   return (
-    <section className="mt-6 rounded-2xl border bg-white p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Tickets</h2>
-        <Button size="sm" onClick={() => setIsOpen(true)}>
-          New ticket
-        </Button>
-      </div>
+    <>
+      <Card className="p-6">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">Tickets</h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Support tickets for this customer.
+            </p>
+          </div>
+          <span className="text-xs text-slate-400">
+            {customerTickets.length} ticket
+            {customerTickets.length === 1 ? "" : "s"}
+          </span>
+        </div>
 
-      {customerTickets.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          No tickets yet for this customer.
-        </p>
-      ) : (
-        <ul className="space-y-2 text-sm">
-          {customerTickets.map((ticket) => (
-            <li
-              key={ticket.id}
-              className="flex items-center justify-between rounded-xl border px-3 py-2"
-            >
-              <div className="min-w-0">
-                <div className="truncate font-medium">{ticket.title}</div>
-                {ticket.description && (
-                  <div className="truncate text-xs text-slate-500">
-                    {ticket.description}
+        <div className="mb-4 flex justify-end">
+          <Button size="sm" onClick={() => setIsOpen(true)}>
+            New ticket
+          </Button>
+        </div>
+
+        {customerTickets.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            No tickets yet for this customer.
+          </p>
+        ) : (
+          <ul className="space-y-3">
+            {customerTickets.map((ticket) => (
+              <li
+                key={ticket.id}
+                className="rounded-2xl border border-slate-200 bg-slate-50 p-3"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-slate-900">{ticket.title}</div>
+                    {ticket.description && (
+                      <div className="mt-1 text-xs text-slate-500">
+                        {ticket.description}
+                      </div>
+                    )}
+                    <div className="mt-2 flex gap-2">
+                      <Badge variant={getStatusVariant(ticket.status) as any} className="text-xs">
+                        {ticket.status}
+                      </Badge>
+                      <Badge variant={getPriorityVariant(ticket.priority) as any} className="text-xs">
+                        {ticket.priority} priority
+                      </Badge>
+                    </div>
                   </div>
-                )}
-                <div className="mt-1 flex gap-2 text-xs text-slate-400">
-                  <span className="uppercase">{ticket.status}</span>
-                  <span>•</span>
-                  <span className="capitalize">{ticket.priority} priority</span>
-                </div>
-              </div>
-              <div className="ml-4 text-right text-xs text-slate-400">
-                <div>
-                  Created:{" "}
-                  {new Date(ticket.createdAt).toLocaleDateString()}
-                </div>
-                {ticket.updatedAt && (
-                  <div>
-                    Updated:{" "}
-                    {new Date(ticket.updatedAt).toLocaleDateString()}
+                  <div className="text-right text-xs text-slate-400">
+                    <div>
+                      Created:{" "}
+                      {new Date(ticket.createdAt).toLocaleDateString()}
+                    </div>
+                    {ticket.updatedAt && (
+                      <div>
+                        Updated:{" "}
+                        {new Date(ticket.updatedAt).toLocaleDateString()}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="New ticket">
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Title
             </label>
             <Input
@@ -121,7 +160,7 @@ export function CustomerTickets({ customerId }: CustomerTicketsProps) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Description
             </label>
             <Textarea
@@ -132,11 +171,10 @@ export function CustomerTickets({ customerId }: CustomerTicketsProps) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-600">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Priority
             </label>
-            <select
-              className="w-full rounded-xl border px-3 py-2 text-sm"
+            <Select
               value={priority}
               onChange={(e) => setPriority(e.target.value as TicketPriority)}
             >
@@ -145,10 +183,10 @@ export function CustomerTickets({ customerId }: CustomerTicketsProps) {
                   {p.charAt(0).toUpperCase() + p.slice(1)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
+            <Button variant="secondary" size="sm" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
             <Button size="sm" onClick={handleCreate} disabled={!title.trim()}>
@@ -157,7 +195,6 @@ export function CustomerTickets({ customerId }: CustomerTicketsProps) {
           </div>
         </div>
       </Modal>
-    </section>
+    </>
   );
 }
-

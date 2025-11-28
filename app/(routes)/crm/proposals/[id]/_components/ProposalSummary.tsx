@@ -23,6 +23,19 @@ function formatCurrency(amount: number, currency: string): string {
   }
 }
 
+function getStatusVariant(status: ProposalType["status"]) {
+  switch (status) {
+    case "Accepted":
+      return "success";
+    case "Rejected":
+      return "danger";
+    case "Sent":
+      return "warning";
+    default:
+      return "default";
+  }
+}
+
 export function ProposalSummary({ proposal, opportunity, account, contact }: Props) {
   const accountName: string = account?.name ?? account?.companyName ?? "Unknown account";
 
@@ -31,97 +44,98 @@ export function ProposalSummary({ proposal, opportunity, account, contact }: Pro
 
   const contactEmail: string | undefined = contact?.email ?? contact?.primaryEmail;
 
-  const statusClassName: string =
-    proposal.status === "Accepted"
-      ? "bg-emerald-100 text-emerald-800"
-      : proposal.status === "Rejected"
-      ? "bg-red-100 text-red-800"
-      : proposal.status === "Sent"
-      ? "bg-blue-100 text-blue-800"
-      : "bg-slate-100 text-slate-800";
-
   return (
-    <div className="space-y-4">
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Proposal Summary</h2>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-600">Status</span>
-            <Badge className={statusClassName}>{proposal.status}</Badge>
+    <div className="space-y-6">
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">Proposal Summary</h2>
+        <div className="space-y-4 text-sm">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
+              Status
+            </p>
+            <Badge variant={getStatusVariant(proposal.status) as any}>
+              {proposal.status}
+            </Badge>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-slate-600">Total amount</span>
-            <span className="font-semibold text-slate-900">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
+              Total amount
+            </p>
+            <p className="text-sm text-slate-700">
               {formatCurrency(proposal.amount, proposal.currency)}
-            </span>
+            </p>
           </div>
           {proposal.startDate && (
-            <div className="flex items-center justify-between">
-              <span className="text-slate-600">Start date</span>
-              <span className="text-slate-900">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
+                Start date
+              </p>
+              <p className="text-sm text-slate-700">
                 {proposal.startDate.slice(0, 10)}
-              </span>
+              </p>
             </div>
           )}
           {proposal.endDate && (
-            <div className="flex items-center justify-between">
-              <span className="text-slate-600">End date</span>
-              <span className="text-slate-900">{proposal.endDate.slice(0, 10)}</span>
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
+                End date
+              </p>
+              <p className="text-sm text-slate-700">{proposal.endDate.slice(0, 10)}</p>
             </div>
           )}
         </div>
       </Card>
 
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">Account &amp; Contact</h2>
-        <div className="space-y-3 text-sm">
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">Account &amp; Contact</h2>
+        <div className="space-y-4 text-sm">
           <div>
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
               Account
-            </div>
-            <div className="text-slate-900">{accountName}</div>
+            </p>
+            <p className="text-sm text-slate-700">{accountName}</p>
           </div>
           <div>
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
               Primary contact
-            </div>
-            <div className="text-slate-900">{contactName}</div>
+            </p>
+            <p className="text-sm text-slate-700">{contactName}</p>
             {contactEmail && (
-              <div className="text-xs text-slate-600">{contactEmail}</div>
+              <p className="text-xs text-slate-500 mt-1">{contactEmail}</p>
             )}
           </div>
         </div>
       </Card>
 
-      <Card className="rounded-2xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-slate-900">
+      <Card className="p-6">
+        <h2 className="mb-4 text-sm font-semibold text-slate-900">
           Linked Opportunity
         </h2>
-        <div className="space-y-2 text-sm">
+        <div className="space-y-4 text-sm">
           <div>
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
               Opportunity
-            </div>
-            <div className="text-slate-900">
+            </p>
+            <p className="text-sm text-slate-700">
               {opportunity?.name ?? opportunity?.title ?? "Unknown opportunity"}
-            </div>
+            </p>
           </div>
           {opportunity?.stage && (
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Stage
-              </div>
-              <div className="text-slate-900">{String(opportunity.stage)}</div>
+              </p>
+              <p className="text-sm text-slate-700">{String(opportunity.stage)}</p>
             </div>
           )}
           {opportunity?.closeDate && (
             <div>
-              <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500 mb-1">
                 Close date
-              </div>
-              <div className="text-slate-900">
+              </p>
+              <p className="text-sm text-slate-700">
                 {String(opportunity.closeDate).slice(0, 10)}
-              </div>
+              </p>
             </div>
           )}
         </div>

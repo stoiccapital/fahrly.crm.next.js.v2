@@ -3,9 +3,7 @@
 import { useState } from "react";
 
 import { CrmModal } from "@/app/components/shared/layout/CrmModal";
-
 import { Input, Select, Textarea, Button } from "@/app/components/shared/ui";
-
 import { Lead, LeadSource, LeadStatus } from "../_types";
 
 type LeadFormModalProps = {
@@ -117,14 +115,14 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
             {error}
           </div>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Company name *
             </label>
             <Input
@@ -137,7 +135,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Contact name *
             </label>
             <Input
@@ -150,7 +148,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Contact email
             </label>
             <Input
@@ -162,7 +160,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Contact phone
             </label>
             <Input
@@ -174,7 +172,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Source
             </label>
             <Select
@@ -192,7 +190,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Status
             </label>
             <Select
@@ -210,7 +208,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Estimated fleet size
             </label>
             <Input
@@ -225,7 +223,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Country
             </label>
             <Input
@@ -237,7 +235,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               City
             </label>
             <Input
@@ -249,7 +247,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1 block text-xs font-medium text-gray-700">
+            <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
               Owner
             </label>
             <Input
@@ -262,7 +260,7 @@ export function LeadFormModal({ isOpen, onClose, onCreate }: LeadFormModalProps)
         </div>
 
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">
             Notes
           </label>
           <Textarea
